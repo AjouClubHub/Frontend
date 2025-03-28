@@ -13,7 +13,7 @@ const SignUpForm = () => {
   const email = useRef();
   const password = useRef();
   const re_password = useRef();
-  const role = useRef();
+  const memberRole = useRef();
 
   // 페이지 이동 설정
   const goToLogin = () => { navigate('/auth/login') };
@@ -24,7 +24,7 @@ const SignUpForm = () => {
     email: "",
     password: "",
     re_password: "",
-    role: ""
+    memberRole: ""
   });
 
   useEffect(() => {
@@ -77,7 +77,7 @@ const SignUpForm = () => {
       return;
     }
 
-    if (!state.role) {
+    if (!state.memberRole) {
       alert('역할을 선택해주세요');
       return;
     }
@@ -87,13 +87,13 @@ const SignUpForm = () => {
       name: state.name,
       password: state.password,
       email: state.email,
-      role: state.role,
+      memberRole: state.memberRole,
     };
 
     console.log("보내는 데이터:", dataToSend); // 보내는 데이터 출력
 
     try {
-      const response = await axios.post(`api/auth/signup`, dataToSend, {
+      const response = await axios.post(`/api/auth/signup`, dataToSend, {
         headers: {
           'Auth-Token': localStorage.getItem('accesToken'),
         },
@@ -102,7 +102,7 @@ const SignUpForm = () => {
       // 상태 코드에 따른 처리
       if (response.status === 200) {
         alert("회원가입에 성공하였습니다.");
-        navigate('/signin');
+        navigate('/auth/login');
       } else if (response.status === 400) {
         alert("회원가입 중 문제가 발생했습니다. 다시 시도해주세요.");
       }
@@ -165,16 +165,16 @@ const SignUpForm = () => {
       <div>
         <label htmlFor="role"></label>
         <select
-          ref={role}
-          name="role"
-          value={state.role}
+          ref={memberRole}
+          name="memberRole"
+          value={state.memberRole}
           onChange={handleChangeState}
           onKeyDown={handleKeyDown}
         >
           <option value="">역할을 선택해주세요.</option>
           <option value="ADMIN">시스템 관리자</option>
-          <option value="CLUB_MANAGER">동아리 관리자</option>
-          <option value="USER">학생</option>
+          <option value="MANAGER">동아리 관리자</option>
+          <option value="MEMBER">학생</option>
         </select>
       </div>
       <button onClick={handleSubmit}>회원가입하기</button>

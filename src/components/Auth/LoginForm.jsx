@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { NavLink,useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import '../../styles/Auth/LoginForm.css'
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+
 
   // enter 키로 로그인
   const activeEnter = (e) => {
@@ -24,24 +24,25 @@ const LoginForm = () => {
     } else if (email === "") {
       alert("email을 입력하세요.");
     } else {
+          // 로그인 데이터를 콘솔로 출력해 확인
+    console.log("Login Data:", { email, password });
       // 모든 값이 제대로 입력되었을 경우
       axios
         .post(`/api/auth/login`, {
           email: email,
           password: password,
         })
-        .then(function (result) {
-          console.log(result.data);
+        // .then(function (result) {
+        //   console.log(result.data);
 
-          // 로컬스토리지에도 저장
-          localStorage.setItem("accessToken", result.data.accessToken);
-          localStorage.setItem("email", email);
-          localStorage.setItem("role", result.data.role);
+        //   // 로컬스토리지에도 저장
+        //   // localStorage.setItem("accessToken", result.data.accessToken);
+        //   // localStorage.setItem("email", email);
 
-          // 로그인 후 홈 페이지로 이동
-          navigate("/", { replace: true });
-          window.location.reload(); // 페이지 새로 고침
-        })
+        //   // 로그인 후 홈 페이지로 이동
+        //   // navigate("/", { replace: true });
+        //   // window.location.reload(); // 페이지 새로 고침
+        // })
         .catch((error) => {
           console.log("로그인 오류. 다시 시도해주세요.");
           console.log(error);
