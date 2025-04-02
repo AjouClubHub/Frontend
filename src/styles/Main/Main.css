@@ -1,0 +1,96 @@
+
+.navbar{
+  top:100%;
+}
+
+/* 동아리 리스트 */
+.club-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px; /* 동아리 항목 사이의 간격 */
+  margin-top: 20px;
+}
+.plain{
+  border-radius: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: #c1d8f0;
+  text-align: center;
+  align-items: center;
+  margin-right: 20px;
+  margin-left: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+ 
+
+}
+/* 각 동아리 항목 */
+.club-item {
+  width: calc(33.33% - 20px); /* 한 줄에 3개 동아리, 각 동아리의 너비를 33.33%로 설정 */
+  background-color: #f9f9f9; /* 동아리 항목 배경색 */
+  border: 1px solid #ddd;
+  border-radius: 15px; /* 둥근 모서리 */
+  padding: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 동아리 항목에 그림자 효과 */
+  transition: transform 0.3s ease; /* hover 시 변형 효과 */
+  margin-bottom: 20px; /* 아래쪽 여백 */
+  box-sizing: border-box; /* 패딩을 포함한 크기 계산 */
+}
+
+.club-item:hover {
+  transform: scale(1.05); /* hover 시 살짝 확대 */
+}
+
+.club-item img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px; /* 이미지 둥근 모서리 */
+  margin-bottom: 15px;
+}
+
+.club-item h3 {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.club-item p {
+  font-size: 14px;
+  color: #555;
+}
+
+.club-item strong {
+  color: #007bff;
+}
+
+/* 페이지네이션 */
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.page-item {
+  display: inline-block;
+  margin: 5px;
+  border-radius: 15px; /* 각 페이지 항목에 둥근 모서리 추가 */
+  background-color: #f1f1f1; /* 아이템 배경색 */
+}
+
+.page-link {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 15px; /* 페이지 링크에도 둥근 모서리 추가 */
+  text-decoration: none;
+  color: black;
+  transition: background-color 0.3s ease;
+  display: block;
+}
+
+.page-link:hover {
+  background-color: #ddd;
+}
+
+.page-item.active .page-link {
+  background-color: #007bff;
+  color: white;
+}

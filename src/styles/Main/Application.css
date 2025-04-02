@@ -1,11 +1,11 @@
 /* 기본 스타일 */
-.club-create-form {
+.application-form {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start; /* 상단 정렬 */
     width: 700px;
-    min-height: 100vh;  /* 화면 크기에 맞춰 늘어남 */
+    min-height: 80vh;  /* 화면 크기에 맞춰 늘어남 */
     background-color: #f7f7f7;
     padding: 20px;
     box-sizing: border-box;
@@ -18,19 +18,23 @@
 }
 
 /* 헤더 스타일 */
-.club-create-form h2 {
+.application-form h2 {
     font-size: 24px;
     color: #333;
     margin-bottom: 20px;
-    text-align: center; /* 제목을 중앙 정렬 */
-    
+    text-align: left; /* 제목을 왼쪽 정렬 */
+    display: inline-block; /* 제목을 인라인 블록으로 설정하여 버튼과 같은 행에 배치 */
+    margin-right: 40px; /* 뒤로가기 버튼과의 간격을 조정 */
 }
 
 /* 뒤로 가기 버튼 스타일 */
-.club-create-form .back-button {
+.application-back-button {
     position: absolute;
-    top: 20px; /* 버튼이 상단에서 20px 떨어지도록 설정 */
-    left: 0; /* 버튼이 왼쪽에서 20px 떨어지도록 설정 */
+    top: 0px;
+    left: 0px;
+}
+
+.application-back-button-btn {
     background-color: transparent;
     border: none;
     font-size: 20px;
@@ -39,14 +43,21 @@
     margin-bottom: 20px;
 }
 
-.club-create-form .back-button:hover {
+.application-back-button-btn:hover {
     color: #0056b3;
 }
 
+/* 가로로 배치되도록 수정된 레이아웃 */
+.application-back-button-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
 /* 입력 필드 스타일 */
-.club-create-form input,
-.club-create-form select,
-.club-create-form textarea {
+.application-form input,
+.application-form select,
+.application-form textarea {
     width: 100%;
     padding: 12px;
     margin: 10px 0;
@@ -58,20 +69,20 @@
 }
 
 /* 선택 박스 스타일 */
-.club-create-form .react-select__control {
+.application-form .react-select__control {
     border-radius: 5px;
 }
 
 /* 입력 필드 포커스 */
-.club-create-form input:focus,
-.club-create-form select:focus,
-.club-create-form textarea:focus {
+.application-form input:focus,
+.application-form select:focus,
+.application-form textarea:focus {
     border-color: #007bff; /* 파란색 포커스 */
     outline: none;
 }
 
 /* 버튼 스타일 */
-.club-create-form button {
+.application-submit-btn {
     width: 100%;
     padding: 14px;
     background-color: #007bff; /* 파란색 */
@@ -84,23 +95,19 @@
     box-sizing: border-box; /* 박스 모델을 동일하게 유지 */
 }
 
-.club-create-form button:hover {
+.application-submit-btn:hover {
     background-color: #0056b3; /* 파란색 hover 효과 */
 }
 
 /* 묶은 박스 스타일 */
-.form-box {
+.application-form-box {
     width: 100%;
     padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
     margin-bottom: 20px;
-    border-radius: 15px; /* 곡선 모서리 */
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 추가 */
 }
 
 /* 가로로 배치되는 항목 스타일 */
-.form-group {
+.application-form-group {
     display: flex;
     justify-content: space-between;
     width: 100%;
@@ -108,12 +115,12 @@
 }
 
 /* 각 항목을 1/2 너비로 설정하여 나란히 배치 */
-.form-group .half-width {
+.application-form-group .application-half-width {
     width: 48%; /* 각 항목을 반으로 나눔 */
 }
 
 /* 세로로 배치되는 항목 스타일 */
-.form-group-vertical {
+.application-form-group-vertical {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -121,50 +128,50 @@
 
 /* 반응형 디자인: 화면이 작아지면 레이아웃이 자동으로 조정 */
 @media (max-width: 768px) {
-    .club-create-form {
+    .application-form {
         padding: 15px;
         width: 100%;
         max-width: 100%;
     }
 
-    .club-create-form h2 {
+    .application-form h2 {
         font-size: 20px;
     }
 
-    .club-create-form input,
-    .club-create-form select,
-    .club-create-form textarea {
+    .application-form input,
+    .application-form select,
+    .application-form textarea {
         padding: 10px;
         font-size: 14px;
     }
 
-    .club-create-form button {
+    .application-form button {
         padding: 12px;
         font-size: 16px;
     }
 
     /* 작은 화면에서 나란히 배치된 항목을 세로로 쌓기 */
-    .form-group {
+    .application-form-group {
         flex-direction: column;
     }
 
-    .form-group .half-width {
+    .application-form-group .application-half-width {
         width: 100%;
     }
 }
 
 @media (max-width: 480px) {
-    .club-create-form {
+    .application-form {
         padding: 10px;
     }
 
-    .club-create-form input,
-    .club-create-form select,
-    .club-create-form textarea {
+    .application-form input,
+    .application-form select,
+    .application-form textarea {
         font-size: 14px;
     }
 
-    .club-create-form button {
+    .application-form button {
         font-size: 14px;
     }
 }

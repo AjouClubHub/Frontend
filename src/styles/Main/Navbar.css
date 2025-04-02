@@ -1,0 +1,135 @@
+/* 기본 스타일 */
+.navbar {
+  background-color: white;
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  justify-content: space-around; /* 버튼들을 양쪽 끝에 배치 */
+  padding: 10px 20px;
+  transition: background-color 0.3s ease;
+  z-index: 10;
+  
+}
+.main {
+  margin-top: 20px;
+  padding: 20px;
+}
+
+/* 로고 스타일 */
+.navbar img {
+  width: 150px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+/* 검색창 스타일 */
+.search-input {
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  width: 500px;
+  transition: border-color 0.3s ease;
+}
+
+.search-input:focus {
+  border-color: black;
+  outline: none;
+}
+
+/* 버튼 스타일 */
+button {
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: white;
+  color: black;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  box-sizing: border-box;
+  position: relative; /* 드롭다운 위치를 버튼을 기준으로 설정하기 위해 상대적으로 위치 설정 */
+}
+
+/* 버튼 hover */
+button:hover {
+  background-color: #f1f1f1; /* Hover 효과 */
+}
+
+/* 동아리 / 소학회 버튼 */
+.club-type-btn {
+  background-color: white;
+  position: relative; /* 드롭다운이 버튼을 기준으로 나타나게 함 */
+}
+
+/* 모집 상태 버튼 */
+.recruitment-btn {
+  background-color: white;
+  position: relative; /* 드롭다운이 버튼을 기준으로 나타나게 함 */
+}
+
+/* 계정 조회 버튼 */
+.account-btn {
+  background-color: white;
+  position: relative; /* 드롭다운이 버튼을 기준으로 나타나게 함 */
+}
+
+/* 드롭다운 메뉴 스타일 */
+.dropdown {
+  position:relative;
+  top: 100%; /* 버튼 바로 밑에 위치 */
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 5px;
+  width: 180px;
+  background-color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  z-index: 100;
+}
+
+/* 드롭다운이 열린 상태에서 표시 */
+.dropdown.open {
+  display: flex;
+}
+
+/* 드롭다운 버튼 스타일 */
+.dropdown button {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: #f1f1f1;
+  font-size: 14px;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+/* 드롭다운 버튼 hover 효과 */
+.dropdown button:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+/* 모바일 화면에서 메뉴 레이아웃 조정 */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .search-input {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .dropdown {
+    width: 100%;
+  }
+
+  .icon-container {
+    margin-right: 0;
+  }
+}

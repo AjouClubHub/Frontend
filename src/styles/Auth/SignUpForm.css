@@ -1,140 +1,153 @@
 /* 기본 스타일 */
 .SignUpForm {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 600px;
-    height: 80vh;
-    background-color: #f7f7f7;
-    padding: 20px;
-    box-sizing: border-box;
-    max-width: 600px;
-    margin: 0 auto;
-    overflow-x: hidden; /* 수평 스크롤 방지 */
-    border-radius: 15px; /* 곡선 모서리 */
-    background-color: #fff; /* 배경을 흰색으로 설정 */
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 추가 */
-    position: relative; /* 뒤로 가는 버튼을 절대 위치로 배치 */
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 600px;
+  height: auto;
+  background-color: #f7f7f7;
+  padding: 20px;
+  box-sizing: border-box;
+  max-width: 600px;
+  margin: 0 auto;
+  overflow-x: hidden; /* 수평 스크롤 방지 */
+  border-radius: 15px; /* 곡선 모서리 */
+  background-color: #fff; /* 배경을 흰색으로 설정 */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 추가 */
+  position: relative;
+}
+
+/* 헤더 스타일: 제목을 중앙 정렬 */
+.SignUpForm h4 {
+  font-size: 24px;
+  color: #333;
+  margin: 0;
+  text-align: center; /* 제목을 중앙 정렬 */
+  width: 100%; /* 제목을 입력폼과 같은 너비로 설정 */
+}
+
+/* 뒤로 가는 버튼을 왼쪽에 배치 */
+.SignUpForm .btn_back {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background-color: transparent;
+  border: none;
+  font-size: 20px;
+  color: #007bff; /* 파란색 */
+  cursor: pointer;
+}
+
+.SignUpForm .btn_back:hover {
+  color: #0056b3; /* 파란색 버튼 hover 효과 */
+}
+
+/* 입력 필드 스타일 */
+.SignUpForm input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+.SignUpForm select {
+  width: 194.5px;
+  height: 45px;
+  padding: 12px;
+  margin: 10px 0;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
   
-  /* 헤더 스타일: 제목을 중앙 정렬 */
+}
+
+/* 입력 필드 포커스 */
+.SignUpForm input:focus,
+.SignUpForm select:focus {
+  border-color: #007bff; /* 파란색 포커스 */
+  outline: none;
+}
+
+/* Select 스타일 추가 */
+.SignUpForm .react-select__control {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+/* 버튼 스타일 */
+.SignUpForm button {
+  padding: 14px;
+  background-color: #007bff; /* 파란색 */
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 18px;
+  cursor: pointer;
+  margin-top: 20px;
+  box-sizing: border-box;
+}
+
+.SignUpForm button:hover {
+  background-color: #0056b3; /* 파란색 hover 효과 */
+}
+
+/* select 요소 스타일 */
+.SignUpForm select {
+  cursor: pointer;
+}
+
+/* 선택지 스타일 */
+.SignUpForm option {
+  font-size: 16px;
+}
+
+/* 반응형 디자인: 화면이 작아지면 레이아웃이 자동으로 조정 */
+@media (max-width: 768px) {
+  .SignUpForm {
+    padding: 15px;
+    width: 100%;
+    max-width: 100%;
+  }
+
   .SignUpForm h4 {
-    font-size: 24px;
-    color: #333;
-    margin: 0;
-    text-align: center; /* 제목을 중앙 정렬 */
-    width: 100%; /* 제목을 입력폼과 같은 너비로 설정 */
-  }
-  
-  /* 뒤로 가는 버튼을 왼쪽에 배치 */
-  .SignUpForm .btn_back {
-    position: absolute;
-    top: 20px; /* 버튼이 상단에서 20px 떨어지도록 설정 */
-    left: 20px; /* 버튼이 왼쪽에서 20px 떨어지도록 설정 */
-    background-color: transparent;
-    border: none;
     font-size: 20px;
-    color: #007bff; /* 파란색 */
-    cursor: pointer;
   }
-  
-  .SignUpForm .btn_back:hover {
-    color: #0056b3; /* 파란색 버튼 hover 효과 */
-  }
-  
-  /* 입력 필드 스타일 */
-  .SignUpForm input{
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-    box-sizing: border-box;
-    transition: border-color 0.3s ease;
-  }
+
+  .SignUpForm input,
   .SignUpForm select {
-    width: 100%;
-    padding: 17px;
-    margin: 10px 0;
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-    box-sizing: border-box;
-    transition: border-color 0.3s ease;
+    padding: 10px;
+    font-size: 14px;
   }
-  
-  /* 입력 필드 포커스 */
-  .SignUpForm input:focus,
-  .SignUpForm select:focus {
-    border-color: #007bff; /* 파란색 포커스 */
-    outline: none;
-  }
-  
-  /* 버튼 스타일 */
+
   .SignUpForm button {
-    padding: 14px;
-    background-color: #007bff; /* 파란색 */
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    font-size: 18px;
-    cursor: pointer;
-    margin-top: 20px;
-    box-sizing: border-box;
-  }
-  
-  .SignUpForm button:hover {
-    background-color: #0056b3; /* 파란색 hover 효과 */
-  }
-  
-  /* select 요소 스타일 */
-  .SignUpForm select {
-    cursor: pointer;
-  }
-  
-  /* 선택지 스타일 */
-  .SignUpForm option {
+    padding: 12px;
     font-size: 16px;
   }
-  
-  /* 반응형 디자인: 화면이 작아지면 레이아웃이 자동으로 조정 */
-  @media (max-width: 768px) {
-    .SignUpForm {
-      padding: 15px;
-      width: 100%;
-      max-width: 100%;
-    }
-  
-    .SignUpForm h4 {
-      font-size: 20px;
-    }
-  
-    .SignUpForm input,
-    .SignUpForm select {
-      padding: 10px;
-      font-size: 14px;
-    }
-  
-    .SignUpForm button {
-      padding: 12px;
-      font-size: 16px;
-    }
+}
+
+@media (max-width: 480px) {
+  .SignUpForm {
+    padding: 10px;
   }
-  
-  @media (max-width: 480px) {
-    .SignUpForm {
-      padding: 10px;
-    }
-  
-    .SignUpForm input,
-    .SignUpForm select {
-      font-size: 14px;
-    }
-  
-    .SignUpForm button {
-      font-size: 14px;
-    }
+
+  .SignUpForm input,
+  .SignUpForm select {
+    font-size: 14px;
   }
-  
+
+  .SignUpForm button {
+    font-size: 14px;
+  }
+}

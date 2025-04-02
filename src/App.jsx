@@ -4,6 +4,7 @@ import Navbar from "./components/Main/Navbar";
 import AuthPage from "./pages/AuthPage";
 import MainPage from "./pages/MainPage"
 import ClubsAdminPage from "./pages/ClubsAdminPage"
+import MyClubsPage from "./pages/MyClubsPage"
 import { Children } from 'react';
 
 
@@ -52,6 +53,7 @@ function App() {
           <Route path="/auth/*" element={<AuthPage />} />
           <Route path="/main/*" element={<MainPage/>} />
           <Route path="/clubsadmin/*" element={<ClubsAdminPage/>}/>
+          <Route path="/myclubs/*" element={<MyClubsPage/>}/>
       
     </Routes>
    

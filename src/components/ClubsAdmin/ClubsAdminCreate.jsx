@@ -8,18 +8,19 @@ import axios from 'axios';  // axios 임포트
 
 //todo: role이 clubsadmin일때만 페이지 들어올수있게
 const ClubsAdminCreate = () => {
+ 
   const navigate = useNavigate();
 
   // 폼 상태 설정
   const [formData, setFormData] = useState({
-    clubName: "",  // 클럽 이름 추가
-    clubType: "",
+    name: "",  // 클럽 이름 추가
+    type: "",
     category: "",
-    execList: "",
-    execPhone: "",
-    intro: "",
-    department: "",
-    recruitmentStatus: "",
+    contacInfo: "",
+    description: "",
+    location:"",
+    keyword: "",
+    recruiredMajors: "",
   });
 
   // 폼 필드 값 변경 핸들러
@@ -40,7 +41,7 @@ const ClubsAdminCreate = () => {
   
     // API 호출하여 서버로 데이터 전송
     try {
-      const response = await axios.post('/api/clubs/create', formData, {
+      const response = await axios.post(`${import.meta.env.VITE_APP_URL}/api/clubs/register`, formData, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, // JWT 토큰
@@ -71,7 +72,7 @@ const ClubsAdminCreate = () => {
             <input
               type="text"
               name="clubName"
-              value={formData.clubName}
+              value={formData.name}
               onChange={handleChange}
               required
               placeholder="클럽 이름을 입력하세요"
@@ -86,7 +87,7 @@ const ClubsAdminCreate = () => {
               <label htmlFor="clubType">클럽 유형:</label>
               <select
                 name="clubType"
-                value={formData.clubType}
+                value={formData.type}
                 onChange={handleChange}
                 required
               >
@@ -118,23 +119,13 @@ const ClubsAdminCreate = () => {
 
         <div className="form-box">
           <div className="form-group">
-            <div className="half-width">
-              <label htmlFor="execList">임원진 명단:</label>
-              <input
-                type="text"
-                name="execList"
-                value={formData.execList}
-                onChange={handleChange}
-                required
-              />
-            </div>
 
             <div className="half-width">
               <label htmlFor="execPhone">임원진 번호:</label>
               <input
                 type="text"
                 name="execPhone"
-                value={formData.execPhone}
+                value={formData.contacInfo}
                 onChange={handleChange}
                 required
               />
@@ -147,7 +138,19 @@ const ClubsAdminCreate = () => {
             <label htmlFor="intro">소개글:</label>
             <textarea
               name="intro"
-              value={formData.intro}
+              value={formData.keyword}
+              onChange={handleChange}
+              required
+            />
+          </div>
+        </div>
+
+        <div className="form-box">
+          <div className="form-group-vertical">
+            <label htmlFor="intro">동아리방 위치:</label>
+            <textarea
+              name="location"
+              value={formData.location}
               onChange={handleChange}
               required
             />
@@ -161,27 +164,15 @@ const ClubsAdminCreate = () => {
               <Select
                 name="department"
                 options={DepartmentParts}
-                value={DepartmentParts.find(department => department.value === formData.department)}
-                onChange={e => handleChange({ target: { name: 'department', value: e.value } })}
+                value={DepartmentParts.find(requiredMajors => requiredMajors.value === formData.recruiredMajors)}
+                onChange={e => handleChange({ target: { name: 'requiredMajors', value: e.value } })}
                 required
                 isSearchable
                 placeholder="학과 선택"
               />
             </div>
 
-            <div className="half-width">
-              <label htmlFor="recruitmentStatus">모집 여부:</label>
-              <select
-                name="recruitmentStatus"
-                value={formData.recruitmentStatus}
-                onChange={handleChange}
-                required
-              >
-                <option value="">모집 여부 선택</option>
-                <option value="모집중">모집중</option>
-                <option value="모집완료">모집완료</option>
-              </select>
-            </div>
+           
           </div>
         </div>
 
