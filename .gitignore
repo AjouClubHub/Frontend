@@ -31,4 +31,4 @@ dist-ssr
 
 .vite.config.js
 
-/node_modules
+node_modules/
