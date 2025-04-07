@@ -1,135 +1,102 @@
-/* 기본 스타일 */
+/* 상단 네비게이션 바 */
 .navbar {
-  background-color: white;
+  height: 80px;
+  padding: 0 40px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
   position: relative;
-  width: 100%;
-  justify-content: space-around; /* 버튼들을 양쪽 끝에 배치 */
-  padding: 10px 20px;
-  transition: background-color 0.3s ease;
   z-index: 10;
-  
-}
-.main {
-  margin-top: 20px;
-  padding: 20px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
-/* 로고 스타일 */
+/* 로고 이미지 크기 조정 */
 .navbar img {
-  width: 150px;
+  max-height: 60px;
+  max-width: 250px;
+  height: auto;
+  width: auto;
   cursor: pointer;
-  margin-right: 10px;
+  object-fit: contain;
 }
 
-/* 검색창 스타일 */
-.search-input {
+/* 검색창 */
+.navbar input[type="text"] {
+  flex: 1;
+  max-width: 500px;
   padding: 10px;
   font-size: 16px;
   border-radius: 5px;
   border: 1px solid #ccc;
-  width: 500px;
   transition: border-color 0.3s ease;
 }
 
-.search-input:focus {
-  border-color: black;
+.navbar input[type="text"]:focus {
+  border-color: #007bff;
   outline: none;
 }
 
-/* 버튼 스타일 */
-button {
+/* 기본 버튼 */
+.navbar button {
   padding: 10px 15px;
-  font-size: 16px;
-  cursor: pointer;
-  background-color: white;
-  color: black;
+  font-size: 15px;
   border: none;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-  box-sizing: border-box;
-  position: relative; /* 드롭다운 위치를 버튼을 기준으로 설정하기 위해 상대적으로 위치 설정 */
-}
-
-/* 버튼 hover */
-button:hover {
-  background-color: #f1f1f1; /* Hover 효과 */
-}
-
-/* 동아리 / 소학회 버튼 */
-.club-type-btn {
   background-color: white;
-  position: relative; /* 드롭다운이 버튼을 기준으로 나타나게 함 */
-}
-
-/* 모집 상태 버튼 */
-.recruitment-btn {
-  background-color: white;
-  position: relative; /* 드롭다운이 버튼을 기준으로 나타나게 함 */
-}
-
-/* 계정 조회 버튼 */
-.account-btn {
-  background-color: white;
-  position: relative; /* 드롭다운이 버튼을 기준으로 나타나게 함 */
-}
-
-/* 드롭다운 메뉴 스타일 */
-.dropdown {
-  position:relative;
-  top: 100%; /* 버튼 바로 밑에 위치 */
-  flex-direction: column;
-  gap: 5px;
-  margin-top: 5px;
-  width: 180px;
-  background-color: white;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  border-radius: 5px;
-  z-index: 100;
-}
-
-/* 드롭다운이 열린 상태에서 표시 */
-.dropdown.open {
-  display: flex;
-}
-
-/* 드롭다운 버튼 스타일 */
-.dropdown button {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  background-color: #f1f1f1;
-  font-size: 14px;
-  padding: 10px 15px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  border-radius: 5px;
+  transition: background-color 0.2s ease;
+}
+
+.navbar button:hover {
+  background-color: #f1f1f1;
+}
+
+/* 드롭다운 메뉴 */
+.navbar > div > button {
   width: 100%;
+  text-align: left;
 }
 
-/* 드롭다운 버튼 hover 효과 */
-.dropdown button:hover {
-  background-color: #007bff;
-  color: white;
+/* 반응형 (중간 화면 이하) */
+@media (max-width: 1366px) {
+  .navbar {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .navbar input[type="text"] {
+    width: 100%;
+    max-width: none;
+    margin: 10px 0;
+  }
+
+  .navbar button {
+    font-size: 14px;
+  }
 }
 
-/* 모바일 화면에서 메뉴 레이아웃 조정 */
+/* 반응형 (모바일) */
 @media (max-width: 768px) {
   .navbar {
     flex-direction: column;
     align-items: flex-start;
+    padding: 10px 20px;
   }
 
-  .search-input {
+  .navbar img {
+    max-width: 120px;
+  }
+
+  .navbar input[type="text"] {
     width: 100%;
-    margin-left: 0;
+    margin: 10px 0;
   }
 
-  .dropdown {
+  .navbar button {
     width: 100%;
-  }
-
-  .icon-container {
-    margin-right: 0;
   }
 }

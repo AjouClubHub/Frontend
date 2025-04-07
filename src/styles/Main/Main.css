@@ -1,96 +1,177 @@
-
-.navbar{
-  top:100%;
+/* 전체 화면 레이아웃 설정 */
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  font-family: 'Arial', sans-serif;
+  background-color: #f7f8fa;
 }
 
-/* 동아리 리스트 */
-.club-list {
+/* 메인 컨테이너 (고정 해상도 기준) */
+.main-container {
+  max-width: 1920px;
+  height: 100vh;
+  margin: 0 auto;
   display: flex;
-  flex-wrap: wrap;
-  gap: 20px; /* 동아리 항목 사이의 간격 */
-  margin-top: 20px;
+  flex-direction: column;
 }
-.plain{
-  border-radius: 15px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  background-color: #c1d8f0;
-  text-align: center;
+
+/* 상단 네비게이션 바 */
+.navbar {
+  height: 80px;
+  padding: 0 40px;
+  display: flex;
   align-items: center;
-  margin-right: 20px;
-  margin-left: 20px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-
- 
-
+  justify-content: space-between;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
-/* 각 동아리 항목 */
+
+.content{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin: 20px auto;
+  height: 200px;
+  margin-top: 60px;
+  border-radius: 10px;
+  box-shadow:0 2px 6px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  
+ 
+}
+
+
+/* 내용 전체 wrapper */
+.content-wrapper {
+  flex: 1;
+  display: flex;
+  overflow-y: auto;
+}
+
+/* 사이드바 */
+.sidebar {
+  width: 250px;
+  padding: 20px;
+  background-color: #ffffff;
+  border-right: 1px solid #e0e0e0;
+  flex-shrink: 0;
+}
+
+/* 클럽 리스트 - 3 x 2 배열 */
+.club-list {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* 클럽 카드 */
 .club-item {
-  width: calc(33.33% - 20px); /* 한 줄에 3개 동아리, 각 동아리의 너비를 33.33%로 설정 */
-  background-color: #f9f9f9; /* 동아리 항목 배경색 */
+  background-color: #ffffff;
   border: 1px solid #ddd;
-  border-radius: 15px; /* 둥근 모서리 */
-  padding: 15px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 동아리 항목에 그림자 효과 */
-  transition: transform 0.3s ease; /* hover 시 변형 효과 */
-  margin-bottom: 20px; /* 아래쪽 여백 */
-  box-sizing: border-box; /* 패딩을 포함한 크기 계산 */
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
 }
 
 .club-item:hover {
-  transform: scale(1.05); /* hover 시 살짝 확대 */
+  transform: translateY(-4px);
 }
 
-.club-item img {
-  width: 100%;
-  height: auto;
-  border-radius: 8px; /* 이미지 둥근 모서리 */
-  margin-bottom: 15px;
-}
-
-.club-item h3 {
-  font-size: 18px;
-  font-weight: bold;
+.club-item h2 {
+  font-size: 1.2rem;
   margin-bottom: 10px;
 }
 
 .club-item p {
-  font-size: 14px;
-  color: #555;
+  font-size: 0.95rem;
+  margin: 5px 0;
 }
 
-.club-item strong {
-  color: #007bff;
-}
-
-/* 페이지네이션 */
-.pagination {
+/* 페이지네이션을 club-list 아래에 중앙 정렬 */
+.pagination-wrapper {
+  grid-column: 1 / -1;
   display: flex;
   justify-content: center;
   margin-top: 20px;
+  margin-bottom: 40px;
 }
 
-.page-item {
-  display: inline-block;
-  margin: 5px;
-  border-radius: 15px; /* 각 페이지 항목에 둥근 모서리 추가 */
-  background-color: #f1f1f1; /* 아이템 배경색 */
+.pagination {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  padding: 0;
 }
+
+.page-item {}
 
 .page-link {
-  padding: 8px 12px;
+  padding: 8px 14px;
+  background-color: #fff;
   border: 1px solid #ddd;
-  border-radius: 15px; /* 페이지 링크에도 둥근 모서리 추가 */
+  color: #333;
   text-decoration: none;
-  color: black;
-  transition: background-color 0.3s ease;
-  display: block;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
 }
 
 .page-link:hover {
-  background-color: #ddd;
+  background-color: #007bff;
+  color: #fff;
+  border-color: #007bff;
 }
 
 .page-item.active .page-link {
   background-color: #007bff;
-  color: white;
+  color: #fff;
+  border-color: #007bff;
+}
+
+/* ✅ 반응형: 1366x768 이하 */
+@media (max-width: 1366px) {
+  .club-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+/* ✅ 반응형: 768px 이하 (모바일 대응) */
+@media (max-width: 768px) {
+  .sidebar {
+    display: none; /* 모바일에서 사이드바 숨김 */
+  }
+
+  .navbar {
+    flex-direction: column;
+    height: auto;
+    padding: 10px;
+    align-items: flex-start;
+  }
+
+  .club-list {
+    grid-template-columns: 1fr;
+    padding: 10px;
+  }
+
+  .club-item h2 {
+    font-size: 1.1rem;
+  }
+
+  .club-item p {
+    font-size: 0.9rem;
+  }
+
+  .pagination-wrapper {
+    margin-left: 0;
+  }
 }

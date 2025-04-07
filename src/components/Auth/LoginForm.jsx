@@ -1,16 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { NavLink, useNavigate } from "react-router-dom";
-import { useCookies } from 'react-cookie'; // react-cookie 사용
-import '../../styles/Auth/LoginForm.css';
+import { NavLink ,useNavigate} from "react-router-dom";
+import "../../styles/Auth/LoginForm.css";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-
-  // 쿠키 사용
-  const [setCookie] = useCookies(["token"]);
 
   const activeEnter = (e) => {
     if (e.key === "Enter") {
@@ -26,22 +22,23 @@ const LoginForm = () => {
     } else if (email === "") {
       alert("email을 입력하세요.");
     } else {
+      // 로그인 요청
       axios
-        .post(
-          `${import.meta.env.VITE_APP_URL}/api/auth/login`,
-          { email: email, password: password },
-          { withCredentials: true }
-        )
+        .post(`${import.meta.env.VITE_APP_URL}/api/auth/login`, {
+          email: email,
+          password: password
+        })
         .then(function (result) {
-          console.log("로그인 성공, 서버 응답:", result);
+        
+
+          localStorage.removeItem("accessToken");
+          const token = result.data.token; // 서버에서 받은 토큰
+
+          // 로컬스토리지에 토큰 저장
+          localStorage.setItem("accessToken", token.replace("Bearer ", "")); // Bearer를 제외하고 저장
+
+          // 로그인 후 홈 페이지로 이동
           navigate('/main/home');
-          if (result.data.token) {
-            // 서버에서 받은 토큰을 쿠키에 저장
-            setCookie("token", `JWT ${result.data.token}`, {
-              path: "/",
-              sameSite: "None",
-            });
-          }
         })
         .catch((error) => {
           console.log("로그인 오류. 다시 시도해주세요.");
