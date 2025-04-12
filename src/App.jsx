@@ -42,6 +42,8 @@ const Layout = ({children}) => {
 
 
 function App() {
+  const userId = localStorage.getItem("userId");
+
  
 
   return (
@@ -49,6 +51,7 @@ function App() {
       
         <Routes>
           {/* 초기 경로 설정 */}
+          <Route path="/" element={<Navigate to={userId ? "/main" : "/auth/login"} replace />} />
           {/* 주요 페이지 라우팅 */}
           <Route path="/auth/*" element={<AuthPage />} />
           <Route path="/main/*" element={<MainPage/>} />

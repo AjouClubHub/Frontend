@@ -45,7 +45,7 @@
 
 /* 입력 필드 스타일 */
 .SignUpForm input {
-  width: 100%;
+  width: 200px;
   padding: 12px;
   margin: 10px 0;
   border: 2px solid #ccc;
@@ -76,8 +76,9 @@
 
 /* Select 스타일 추가 */
 .SignUpForm .react-select__control {
-  width: 100%;
-  padding: 12px;
+  width: 200px;
+  height: 45px;
+  padding: 0 12px;
   margin: 10px 0;
   border: 2px solid #ccc;
   border-radius: 5px;
@@ -150,4 +151,50 @@
   .SignUpForm button {
     font-size: 14px;
   }
+}
+
+
+/* 중복 확인용 input과 버튼을 수평 정렬 */
+.SignUpForm .input-with-button {
+  display: flex;
+  align-items: center; /* ✅ 세로 가운데 정렬 */
+  gap: 10px;
+  width: 200px; /* ✅ 부모는 전체 사용 */
+  max-width: 360px; /* ✅ 다른 input과 동일한 max-width */
+  margin: 10px 0;
+}
+
+/* 입력 필드 */
+.SignUpForm .with-check {
+  flex: 1;
+  height: 45px;
+  padding: 10px 12px;
+  font-size: 16px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+  line-height: normal;
+}
+
+/* 버튼 높이 input과 완전 동일 */
+.SignUpForm .check-btn {
+  height: 45px;
+  padding: 0 14px;
+  font-size: 14px;
+  line-height: normal;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  box-sizing: border-box;
+  margin: 0; /* ✅ 여백 제거 */
+  vertical-align: middle;
+}
+
+.SignUpForm .check-btn:hover {
+  background-color: #0056b3;
 }

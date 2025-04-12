@@ -17,12 +17,17 @@ import { RiComputerLine } from "react-icons/ri";
 
 //todo:navbar세로로
 
-const Navbar = ({ onClubTypeChange, onRecruitmentChange, onAccountChange, onSearchChange }) => {
+const Navbar = ({ onClubTypeChange, onRecruitmentChange, onSearchChange }) => {
   const navigate = useNavigate();
   const [activeMenu, setActiveMenu] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
   const toggleMenu = (menu) => setActiveMenu(activeMenu === menu ? null : menu);
+
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    navigate("/auth/login")
+  }
 
   return (
     <nav className="navbar">
@@ -59,9 +64,10 @@ const Navbar = ({ onClubTypeChange, onRecruitmentChange, onAccountChange, onSear
       <button onClick={() => toggleMenu('account')}>계정</button>
       {activeMenu === 'account' && (
         <div>
-          <button onClick={() => onAccountChange('login')}>로그인</button>
-          <button onClick={() => onAccountChange('signup')}>회원가입</button>
-          <button onClick={() => onAccountChange('profile')}>계정조회</button>
+          <button onClick={() => navigate(`/auth/login`)}>로그인</button>
+          <button onClick={() => navigate(`/auth/signup`)}>회원가입</button>
+          <button onClick={() => navigate(`/auth/setting`)}>계정조회</button>
+          <button onClick={handleLogout}>로그아웃</button>
         </div>
       )}
     </nav>

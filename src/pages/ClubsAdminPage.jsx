@@ -15,7 +15,7 @@ const ClubsAdminPage = () => {
         <Route path="/" element={<Navigate to="/clubsadmin/home" replace />} />
         <Route path="/home" element={< ClubsAdmin/>} />
         <Route path="/clubsadmincreate" element={< ClubsAdminCreate/>} />
-        <Route path=":clubsadminid" element={< ClubsAdminDetail/>} />
+        <Route path="/:clubsadminid" element={< ClubsAdminDetail/>} />
 
        
       </Routes>

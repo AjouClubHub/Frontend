@@ -1,25 +1,28 @@
 import React, { useState } from 'react';
-import Select from 'react-select';
-import DepartmentParts from '../../assets/Data/DepartmentParts'; // DepartmentParts 불러오기
+import {useParams,useNavigate } from 'react-router-dom';
 import { FaArrowLeft } from "react-icons/fa";
 import axios from 'axios'; // axios import
 import '../../styles/Main/Application.css';
 
+
+//todo 전화번호
 const Application = () => {
   const [formData, setFormData] = useState({
-    name: '',
     studentId: '',
-    department: '',
-    dob: '',
+    major: '',
+    birthDate: '',
     gender: '',
-    phone: '',
+    phoneNumber: '',
     motivation: '',
   });
 
+  const navigate = useNavigate();
+
+ const { id } = useParams();
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === 'phone') {
+    if (name === 'phoneNmuber') {
       // 핸드폰 번호에서 숫자만 허용하고 '-' 입력 시 경고
       if (value.includes('-')) {
         alert('핸드폰 번호에는 "-"를 입력할 수 없습니다.');
@@ -39,72 +42,81 @@ const Application = () => {
     }
   };
 
-  const handleSelectChange = (e) => {
-    setFormData({
-      ...formData,
-      department: e.value, // 선택된 값으로 department 업데이트
-    });
-  };
 
   const validateForm = () => {
-    const { name, studentId, department, dob, gender, phone, motivation } = formData;
+    const { studentId, major, birthDate, gender, phoneNumber, motivation } = formData;
 
-    if (!name || !studentId || !department || !dob || !gender || !phone || !motivation) {
+    if ( !studentId || !major || !birthDate || !gender || !phoneNumber || !motivation) {
       alert('모든 필드를 채워주세요.');
       return false;
     }
 
-    if (!/^\d{10,11}$/.test(phone)) {  // 핸드폰 번호는 10자리 또는 11자리 숫자여야 함
-      alert('핸드폰 번호는 숫자만 입력 가능하며, 10자리 또는 11자리여야 합니다.');
-      return false;
-    }
 
     return true;  // 모든 유효성 검사 통과
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // 유효성 검사
-    if (!validateForm()) {
-      return;  // 유효성 검사에 실패하면 제출하지 않음
+  
+    if (!validateForm()) return;
+  
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      alert("로그인이 필요한 서비스입니다.");
+      navigate('/auth/login');
+      return;
     }
-
+  
     try {
-      const response = await axios.post('/api/clubs/{clubId}/applications', formData);
-      console.log('Response:', response.data); // 서버 응답을 로그로 출력
-
+      // ✅ 1. 현재 동아리 정보 불러오기
+      const clubRes = await axios.get(`${import.meta.env.VITE_APP_URL}/api/clubs/${id}`, {
+        headers: {
+          Authorization: `Bearer Bearer ${token}`
+        }
+      });
+  
+      const joinRequirement = clubRes.data?.data?.joinRequirement;
+  
+      // ✅ 2. 학과 비교
+      if (joinRequirement && joinRequirement !== formData.major) {
+        alert(`가입 가능 학과는 "${joinRequirement}"입니다.`);
+        return;
+      }
+  
+      console.log("전송데이터:", formData);
+  
+      // ✅ 3. 실제 가입 요청 보내기
+      const response = await axios.post(
+        `${import.meta.env.VITE_APP_URL}/api/clubs/${id}/applications`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer Bearer ${token}`,
+          },
+        }
+      );
+  
       if (response.status === 200) {
         alert('가입 신청이 성공적으로 완료되었습니다.');
-        // 성공적으로 처리된 후 처리할 작업을 추가할 수 있습니다.
+        navigate('/main'); // 가입 완료 후 메인으로 이동 등 처리
       }
     } catch (error) {
       console.error('Error submitting application:', error);
       alert('서버와의 통신 중 오류가 발생했습니다. 다시 시도해 주세요.');
     }
   };
+  
 
   return (
     <form onSubmit={handleSubmit} className="application-form">
       <div className="application-back-button">
-        <button type="button" className="application-back-button-btn"><FaArrowLeft /></button>
+        <button type="button" className="application-back-button-btn" onClick={() => navigate(`/main/home`)} ><FaArrowLeft /></button>
       </div>
 
       <h2 className="application-title">동아리 가입 신청</h2>
 
       <div className="application-form-box">
         <div className="application-form-group">
-          <div className="application-half-width">
-            <label htmlFor="name">이름:</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
-          </div>
           <div className="application-half-width">
             <label htmlFor="studentId">학번:</label>
             <input
@@ -117,30 +129,14 @@ const Application = () => {
             />
           </div>
         </div>
-        {/* 학과 선택 */}
-        <div className="application-form-group">
-          <div className="application-half-width">
-            <label htmlFor="department">가입 학과:</label>
-            <Select
-              name="department"
-              options={DepartmentParts}
-              value={DepartmentParts.find(department => department.value === formData.department)}
-              onChange={handleSelectChange}
-              required
-              isSearchable
-              placeholder="학과 선택"
-              className="application-react-select-container"
-            />
-          </div>
-        </div>
         <div className="application-form-group">
           <div className="application-half-width">
             <label htmlFor="dob">생년월일:</label>
             <input
               type="date"
-              id="dob"
-              name="dob"
-              value={formData.dob}
+              id="birthDate"
+              name="birthDate"
+              value={formData.birthDate}
               onChange={handleChange}
               required
             />
@@ -155,19 +151,19 @@ const Application = () => {
               required
             >
               <option value="">성별 선택</option>
-              <option value="male">남성</option>
-              <option value="female">여성</option>
+              <option value="남자">남자</option>
+              <option value="여자">여자</option>
             </select>
           </div>
         </div>
         <div className="application-form-group">
           <div className="application-half-width">
-            <label htmlFor="phone">전화번호:</label>
+            <label htmlFor="phoneNumber">전화번호:</label>
             <input
               type="tel"
-              id="phone"
-              name="phone"
-              value={formData.phone}
+              id="phoneNumber"
+              name="phoneNumber"
+              value={formData.phoneNumber}
               onChange={handleChange}
               required
             />
