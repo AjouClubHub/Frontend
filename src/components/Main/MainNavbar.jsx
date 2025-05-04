@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { CiSearch } from "react-icons/ci";
-import "../../styles/Main/Navbar.css";
+import "../../styles/Main/MainNavbar.css";
 import { useNavigate } from "react-router-dom";
 
 import { MdAccountCircle } from "react-icons/md";
@@ -17,7 +17,7 @@ import { RiComputerLine } from "react-icons/ri";
 
 //todo:navbar세로로
 
-const Navbar = ({ onClubTypeChange, onRecruitmentChange, onSearchChange }) => {
+const MainNavbar = ({  onRecruitmentChange, onSearchChange }) => {
   const navigate = useNavigate();
   const [activeMenu, setActiveMenu] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -43,14 +43,7 @@ const Navbar = ({ onClubTypeChange, onRecruitmentChange, onSearchChange }) => {
         placeholder="🔍 동아리명 검색"
       />
 
-      <button onClick={() => toggleMenu('type')}>동아리 / 소학회</button>
-      {activeMenu === 'type' && (
-        <div>
-          <button onClick={() => onClubTypeChange('전체')}>전체</button>
-          <button onClick={() => onClubTypeChange('동아리')}>동아리</button>
-          <button onClick={() => onClubTypeChange('소학회')}>소학회</button>
-        </div>
-      )}
+
 
       <button onClick={() => toggleMenu('status')}>모집 상태</button>
       {activeMenu === 'status' && (
@@ -74,4 +67,4 @@ const Navbar = ({ onClubTypeChange, onRecruitmentChange, onSearchChange }) => {
   );
 };
 
-export default Navbar;
+export default  MainNavbar;

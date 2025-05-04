@@ -1,0 +1,49 @@
+.recruit-create-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  
+  .recruit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+  
+  .recruit-form input,
+  .recruit-form textarea {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    width: 100%;
+  }
+  
+  .recruit-form textarea {
+    height: 100px;
+    resize: vertical;
+  }
+  
+  .button-group {
+    display: flex;
+    gap: 10px;
+  }
+  
+  button {
+    padding: 10px 20px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  button[type="submit"] {
+    background-color: #2f80ed;
+    color: white;
+  }
+  
+  button[type="button"] {
+    background-color: #ccc;
+  }
+  

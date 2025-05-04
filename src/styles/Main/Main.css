@@ -1,4 +1,3 @@
-/* 전체 화면 레이아웃 설정 */
 body, html {
   margin: 0;
   padding: 0;
@@ -9,100 +8,102 @@ body, html {
   background-color: #f7f8fa;
 }
 
-/* 메인 컨테이너 (고정 해상도 기준) */
 .main-container {
-  max-width: 1920px;
-  height: 100vh;
+  max-width: 1200px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-}
-
-/* 상단 네비게이션 바 */
-.navbar {
-  height: 80px;
-  padding: 0 40px;
-  display: flex;
   align-items: center;
-  justify-content: space-between;
-  background-color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  padding: 20px;
 }
 
-.content{
+/* 상단 소개 영역 */
+.content {
   display: flex;
-  flex-direction: row;
   align-items: center;
   justify-content: center;
   text-align: center;
-  margin: 20px auto;
-  height: 200px;
-  margin-top: 60px;
+  margin-bottom: 40px;
+  padding: 20px;
   border-radius: 10px;
-  box-shadow:0 2px 6px rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  
- 
+  background-color: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 1200px;
 }
 
+.text-block {
+  text-align: left;
+}
 
-/* 내용 전체 wrapper */
+.text-block h1 {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+
+.text-block p {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* 클럽 섹션 */
 .content-wrapper {
-  flex: 1;
-  display: flex;
-  overflow-y: auto;
+  width: 100%;
+  max-width: 1200px;
 }
 
-/* 사이드바 */
-.sidebar {
-  width: 250px;
-  padding: 20px;
-  background-color: #ffffff;
-  border-right: 1px solid #e0e0e0;
-  flex-shrink: 0;
+.club-section {
+  width: 100%;
 }
 
-/* 클럽 리스트 - 3 x 2 배열 */
 .club-list {
-  flex: 1;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-  padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 32px;
+  padding: 10px;
+  max-width: 1024px; /* ✅ 전체 3개 카드 + gap 포함 */
+  margin: 0 auto;
   box-sizing: border-box;
 }
 
-/* 클럽 카드 */
+/* ✅ 카드 3개 (320px씩) */
 .club-item {
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  padding: 16px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease;
+  flex: 0 0 320px;
+  background-color: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  min-height: 260px;
+  transition: transform 0.2s ease-in-out;
 }
 
 .club-item:hover {
-  transform: translateY(-4px);
+  transform: translateY(-6px);
+}
+
+
+
+.club-item:hover {
+  transform: translateY(-6px);
 }
 
 .club-item h2 {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
+  font-weight: bold;
   margin-bottom: 10px;
 }
 
 .club-item p {
-  font-size: 0.95rem;
+  font-size: 1rem;
   margin: 5px 0;
 }
 
-/* 페이지네이션을 club-list 아래에 중앙 정렬 */
+/* 페이지네이션 */
 .pagination-wrapper {
-  grid-column: 1 / -1;
+  margin-top: 40px;
   display: flex;
   justify-content: center;
-  margin-top: 20px;
-  margin-bottom: 40px;
 }
 
 .pagination {
@@ -111,8 +112,6 @@ body, html {
   list-style: none;
   padding: 0;
 }
-
-.page-item {}
 
 .page-link {
   padding: 8px 14px;
@@ -135,6 +134,63 @@ body, html {
   background-color: #007bff;
   color: #fff;
   border-color: #007bff;
+}
+
+/* 모달 영역 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 16px;
+  width: 90vw;
+  max-width: 1000px;
+  justify-content: center;
+  align-items: center;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  font-family: 'Arial', sans-serif;
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #888;
+}
+
+.modal-close:hover {
+  color: #000;
+}
+
+.modal-content h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #222;
+}
+
+.modal-content p {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 0.8rem;
+  color: #444;
 }
 
 .modal-btn {
@@ -160,131 +216,59 @@ body, html {
   background-color: #2e7d32;
 }
 
-
-/* ✅ 반응형: 1366x768 이하 */
-@media (max-width: 1366px) {
-  .club-list {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-  }
+.keyword-tag {
+  display: inline-block;
+  background-color: #e0f0ff; /* 연한 파란색 배경 */
+  color: #007bff; /* 파란색 글자 */
+  padding: 6px 12px;
+  border-radius: 999px; /* 타원형 */
+  font-size: 0.85rem;
+  margin: 4px 4px 0 0;
+  white-space: nowrap; /* 줄바꿈 없이 */
 }
 
-/* ✅ 반응형: 768px 이하 (모바일 대응) */
-@media (max-width: 768px) {
-  .sidebar {
-    display: none; /* 모바일에서 사이드바 숨김 */
+
+
+
+/* ✅ 반응형: 1024px 이하 → 2개 */
+@media (max-width: 1024px) {
+  .club-list {
+    max-width: 688px; /* 2개 * 320 + 32px gap */
   }
 
-  .navbar {
+  .club-item {
+    flex: 0 0 320px;
+  }
+  .content {
     flex-direction: column;
-    height: auto;
-    padding: 10px;
     align-items: flex-start;
+    text-align: left;
+    padding: 16px;
   }
 
+  .text-block {
+    margin-top: 16px;
+    width: 100%;
+  }
+
+  .text-block h1 {
+    font-size: 1.5rem;
+  }
+
+  .text-block p {
+    font-size: 0.95rem;
+  }
+}
+
+/* ✅ 반응형: 768px 이하 → 1개 */
+@media (max-width: 768px) {
   .club-list {
-    grid-template-columns: 1fr;
-    padding: 10px;
+    max-width: 100%;
+    padding: 16px;
+    gap: 16px;
   }
 
-  .club-item h2 {
-    font-size: 1.1rem;
-  }
-
-  .club-item p {
-    font-size: 0.9rem;
-  }
-
-  .pagination-wrapper {
-    margin-left: 0;
-  }
-}
-
-/* --- 🔽 슬라이드 모달 스타일 추가 --- */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.4);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  animation: fadeIn 0.3s ease-in-out;
-}
-
-.modal-content {
-  background-color: #fff;
-  padding: 2rem 2.5rem;
-  border-radius: 16px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-  width: 480px;
-  max-width: 90%;
-  max-height: 80vh;
-  overflow-y: auto;
-  position: relative;
-  transform: translateY(40px);
-  animation: slideUp 0.35s ease-out forwards;
-  font-family: 'Arial', sans-serif;
-}
-
-/* 닫기 버튼 */
-.modal-close {
-  position: absolute;
-  top: 1.2rem;
-  right: 1.2rem;
-  font-size: 1.4rem;
-  background: none;
-  border: none;
-  color: #888;
-  font-weight: bold;
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
-
-.modal-close:hover {
-  color: #000;
-}
-
-/* 텍스트 스타일 */
-.modal-content h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 1.2rem;
-  color: #222;
-}
-
-.modal-content p {
-  font-size: 1rem;
-  line-height: 1.6;
-  margin-bottom: 0.8rem;
-  color: #444;
-}
-
-.modal-content p strong {
-  color: #1e88e5;
-}
-
-/* 슬라이드 애니메이션 */
-@keyframes slideUp {
-  from {
-    transform: translateY(40px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-/* 어둡게 배경 깔리는 애니메이션 */
-@keyframes fadeIn {
-  from {
-    background-color: rgba(0, 0, 0, 0);
-  }
-  to {
-    background-color: rgba(0, 0, 0, 0.4);
+  .club-item {
+    flex: 0 0 100%;
   }
 }

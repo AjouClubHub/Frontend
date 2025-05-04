@@ -1,0 +1,84 @@
+/* 바깥 래퍼 */
+.clubs-admin-detail-wrapper {
+  width: 100%;
+  font-family: "Noto Sans KR", sans-serif;
+}
+
+/* 상단 탭 바 전체 너비 */
+.clubs-sub-navbar {
+  display: flex;
+  justify-content: center;
+  background-color: #9ecbff;
+  padding: 15px 0;
+  gap: 40px;
+}
+
+.clubs-sub-navbar button {
+  background: none;
+  border: none;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  padding-bottom: 5px;
+  position: relative;
+}
+
+.clubs-sub-navbar button.active::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 3px;
+  width: 100%;
+  max-width: 80px;
+  background-color: white;
+  border-radius: 2px;
+}
+
+.clubs-sub-navbar button:hover {
+  opacity: 0.85;
+}
+
+/* 내부 컨테이너: 사이드바 + 본문 */
+.clubs-admin-detail-container {
+  display: flex;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px;
+}
+
+/* 사이드바 */
+.club-sidebar {
+  width: 250px;
+  background-color: #f5f5f5;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin-right: 30px;
+  height: fit-content;
+}
+
+.club-sidebar h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.club-sidebar p {
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #444;
+}
+
+/* 본문 */
+.club-main {
+  flex: 1;
+}
+
+.detail-content {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}

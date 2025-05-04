@@ -58,6 +58,14 @@
   accent-color: #007bff;
 }
 
+.main-container {
+  max-width: calc(100% - 200px); /* sidebar를 제외한 너비 */
+  margin-left: 200px; /* sidebar 공간 확보 */
+  padding: 100px 20px 20px 20px; /* 상단 여백 + 좌우 패딩 */
+  box-sizing: border-box;
+}
+
+
 /* 반응형 - 중간 해상도 (1366px 이하) */
 @media (max-width: 1366px) {
   .sidebar {

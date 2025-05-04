@@ -27,7 +27,12 @@ const SignUpForm = () => {
   });
 
   const [emailChecked, setEmailChecked] = useState(false);
+  const [emailVerified, setEmailVerified] = useState(false);
+  console.log(emailVerified)
+  const [verificationCode, setVerificationCode] = useState("");
   const [studentIdChecked, setStudentIdChecked] = useState(false);
+
+
 
   const goToLogin = () => { navigate('/auth/login') };
 
@@ -40,7 +45,10 @@ const SignUpForm = () => {
 
   const handleChangeState = (e) => {
     setState({ ...state, [e.target.name]: e.target.value });
-    if (e.target.name === "email") setEmailChecked(false);
+    if (e.target.name === "email") {
+      setEmailChecked(false);
+      setEmailVerified(false);
+    }
     if (e.target.name === "studentId") setStudentIdChecked(false);
   };
 
@@ -75,13 +83,56 @@ const SignUpForm = () => {
         alert("이미 가입된 이메일입니다.");
         setEmailChecked(false);
       } else {
-        alert("사용 가능한 이메일입니다.");
+        alert("사용 가능한 이메일입니다. 인증 코드를 발송해주세요.");
         setEmailChecked(true);
+        // ✅ 코드 발송은 이제 여기서 안 함!
       }
-  
     } catch (err) {
       alert("이메일 중복 확인 중 오류가 발생했습니다.");
       console.error(err);
+    }
+  };
+
+  const sendVerificationCode = async () => {
+    try {
+      await axios.post(`${import.meta.env.VITE_APP_URL}/api/auth/send-email`, {
+        email: state.email
+      });
+      alert("인증 코드가 이메일로 발송되었습니다.");
+    } catch (err) {
+      alert("인증 코드 발송 중 오류 발생");
+      console.error(err);
+    }
+  };
+  
+  
+
+  const verifyEmailCode = async () => {
+    try {
+      const res = await axios.post(`${import.meta.env.VITE_APP_URL}/api/auth/verify-email`, {
+        email: state.email,
+        code: verificationCode.trim(), // 혹시 모를 공백 제거
+      });
+  
+      console.log("응답 확인", res.data);
+  
+      // statusCode가 200 또는 문자열로 올 수도 있음
+      if (
+        res.data.statusCode === "200" ||
+        res.data.statusCode === 200 ||
+        res.data.statusCode === "OK"
+      ) {
+        alert("이메일 인증이 완료되었습니다.");
+        setEmailVerified(true);
+      } else {
+        alert(res.data.message || "인증 코드가 일치하지 않습니다.");
+      }
+
+      console.log("이메일 인증 응답:",res.data)
+  
+    } catch (err) {
+      console.error("🔥 인증 오류:", err.response?.data || err.message);
+      alert("이메일 인증 중 오류가 발생했습니다.");
     }
   };
   
@@ -91,14 +142,14 @@ const SignUpForm = () => {
       alert("학번을 입력해주세요.");
       return;
     }
-  
+
     try {
       const res = await axios.get(`${import.meta.env.VITE_APP_URL}/api/auth/studentId`, {
         params: { studentId: state.studentId }
       });
-  
+
       const isDuplicate = res.data.data;
-  
+
       if (isDuplicate) {
         alert("이미 사용 중인 학번입니다.");
         setStudentIdChecked(false);
@@ -106,13 +157,12 @@ const SignUpForm = () => {
         alert("사용 가능한 학번입니다.");
         setStudentIdChecked(true);
       }
-  
+
     } catch (err) {
       alert("학번 중복 확인 중 오류가 발생했습니다.");
       console.error(err);
     }
   };
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -160,10 +210,10 @@ const SignUpForm = () => {
       return;
     }
 
-    if (!emailChecked) {
-      alert("이메일 중복 확인을 해주세요.");
-      return;
-    }
+    // if (!emailChecked || !emailVerified) {
+    //   alert("이메일 인증을 완료해주세요.");
+    //   return;
+    // }
 
     if (!studentIdChecked) {
       alert("학번 중복 확인을 해주세요.");
@@ -178,8 +228,6 @@ const SignUpForm = () => {
       memberRole: state.memberRole,
       major: state.major
     };
-
-    console.log("보내는 데이터:", dataToSend);
 
     try {
       const response = await axios.post(`${import.meta.env.VITE_APP_URL}/api/auth/signup`, dataToSend, {
@@ -198,24 +246,30 @@ const SignUpForm = () => {
     }
   };
 
+
+ 
+
+
+
   return (
     <div className="SignUpForm">
       <button onClick={goToLogin} className="btn_back"><FaArrowLeft /></button>
       <h4>회원가입</h4>
+
       <div className="input-with-button">
-  <input
-    ref={studentId}
-    name="studentId"
-    value={state.studentId}
-    onChange={handleChangeState}
-    onKeyDown={handleKeyDown}
-    placeholder="학번"
-    className="with-check"
-  />
-  <button type="button" className="check-btn" onClick={checkStudentIdDuplicate}>
-    중복 확인
-  </button>
-</div>
+        <input
+          ref={studentId}
+          name="studentId"
+          value={state.studentId}
+          onChange={handleChangeState}
+          onKeyDown={handleKeyDown}
+          placeholder="학번"
+          className="with-check"
+        />
+        <button type="button" className="check-btn" onClick={checkStudentIdDuplicate}>
+          중복 확인
+        </button>
+      </div>
 
       <div>
         <input
@@ -252,7 +306,8 @@ const SignUpForm = () => {
         />
       </div>
 
-      <div className="input-with-button">
+{/* 이메일 입력 + 중복 확인 + 인증코드 발송 버튼 (한 줄에) */}
+<div className="input-with-double-buttons">
   <input
     ref={email}
     name="email"
@@ -265,7 +320,43 @@ const SignUpForm = () => {
   <button type="button" className="check-btn" onClick={checkEmailDuplicate}>
     중복 확인
   </button>
+
+  {/* ✅ 중복 확인이 완료되고 아직 인증 전일 때만 코드 발송 버튼 노출 */}
+  {emailChecked && !emailVerified && (
+    <button
+      type="button"
+      className="check-btn"
+      onClick={sendVerificationCode} // 따로 빼놓은 함수 사용
+    >
+      코드 발송
+    </button>
+  )}
 </div>
+
+
+
+{/* 인증 코드 입력 + 인증 확인 버튼 */}
+{emailChecked && !emailVerified && (
+  <div className="input-with-button">
+    <input
+      type="text"
+      placeholder="인증 코드 입력"
+      value={verificationCode}
+      onChange={(e) => setVerificationCode(e.target.value)}
+    />
+    <button type="button" className="check-btn" onClick={verifyEmailCode}>
+      인증 확인
+    </button>
+  </div>
+)}
+
+{/* 인증 완료되면 메시지 표시 */}
+{emailVerified && (
+  <p style={{ color: "green", fontWeight: "bold", marginTop: "5px" }}>
+    ✅ 이메일 인증 완료
+  </p>
+)}
+
 
       <div>
         <select
@@ -281,6 +372,9 @@ const SignUpForm = () => {
           <option value="MEMBER">학생</option>
         </select>
       </div>
+
+   
+
 
       <div className="half-width">
         <Select

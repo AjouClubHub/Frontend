@@ -87,6 +87,18 @@
   transition: border-color 0.3s ease;
 }
 
+.input-with-double-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.input-with-double-buttons input {
+  flex: 1;
+}
+
+
 /* 버튼 스타일 */
 .SignUpForm button {
   padding: 14px;
