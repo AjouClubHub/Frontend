@@ -1,11 +1,13 @@
 import './App.css'
-import {BrowserRouter as Router, Routes, Route, Navigate,useLocation} from "react-router-dom"
-import Navbar from "./components/Main/Navbar";
+import {BrowserRouter as Router, Routes, Route, Navigate, BrowserRouter} from "react-router-dom"
+import Layout from './components/Layout/Layout';
 import AuthPage from "./pages/AuthPage";
 import MainPage from "./pages/MainPage"
 import ClubsAdminPage from "./pages/ClubsAdminPage"
 import MyClubsPage from "./pages/MyClubsPage"
-import { Children } from 'react';
+
+
+
 
 
 
@@ -27,18 +29,7 @@ import { Children } from 'react';
 //이미지는 랜더링을 줄이고 메모리크기를 최적화시키기 위해 import로 불러와야함
 
 
-const Layout = ({children}) => {
-  const location = useLocation();
-  const hideNavbar = location.pathname.startsWith("/auth");
-  return (
-    <>
-      {!hideNavbar && <Navbar />}
-      <main>{children}</main>
-    </>
-  );
-  
 
-}
 
 
 function App() {
@@ -48,18 +39,31 @@ function App() {
 
   return (
     <>
-      
-        <Routes>
+
+
+    <Routes>
           {/* 초기 경로 설정 */}
+          <Route element={<Layout />}>
           <Route path="/" element={<Navigate to={userId ? "/main" : "/auth/login"} replace />} />
-          {/* 주요 페이지 라우팅 */}
-          <Route path="/auth/*" element={<AuthPage />} />
           <Route path="/main/*" element={<MainPage/>} />
           <Route path="/clubsadmin/*" element={<ClubsAdminPage/>}/>
           <Route path="/myclubs/*" element={<MyClubsPage/>}/>
+        
+          </Route>
+          {/* 주요 페이지 라우팅 */}
+          <Route path="/auth/*" element={<AuthPage />} />
+         
+    
       
     </Routes>
+
+
+
    
+   
+
+      
+       
 
 
       

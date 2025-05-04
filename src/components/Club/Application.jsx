@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
-import {useParams,useNavigate } from 'react-router-dom';
+import {useNavigate,useParams } from 'react-router-dom';
 import { FaArrowLeft } from "react-icons/fa";
 import axios from 'axios'; // axios import
-import '../../styles/Main/Application.css';
-
+import '../../styles/Club/Application.css';
 
 //todo 전화번호
 const Application = () => {
   const [formData, setFormData] = useState({
     studentId: '',
-    major: '',
     birthDate: '',
     gender: '',
     phoneNumber: '',
@@ -17,22 +15,29 @@ const Application = () => {
   });
 
   const navigate = useNavigate();
+  const {clubId} = useParams();
 
- const { id } = useParams();
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    if (name === 'phoneNmuber') {
-      // 핸드폰 번호에서 숫자만 허용하고 '-' 입력 시 경고
-      if (value.includes('-')) {
-        alert('핸드폰 번호에는 "-"를 입력할 수 없습니다.');
-        return; // '-' 입력시 값을 업데이트하지 않음
+  
+    if (name === 'phoneNumber') {
+      // 1️⃣ 숫자만 남기기
+      const onlyNumber = value.replace(/[^0-9]/g, '');
+  
+      // 2️⃣ 하이픈 자동 추가
+      let formatted = onlyNumber;
+      if (onlyNumber.length <= 3) {
+        formatted = onlyNumber;
+      } else if (onlyNumber.length <= 7) {
+        formatted = `${onlyNumber.slice(0, 3)}-${onlyNumber.slice(3)}`;
+      } else {
+        formatted = `${onlyNumber.slice(0, 3)}-${onlyNumber.slice(3, 7)}-${onlyNumber.slice(7, 11)}`;
       }
-      // 숫자만 허용, 다른 문자는 제거
-      const numericValue = value.replace(/[^0-9]/g, ''); // 숫자 이외의 문자 제거
+  
       setFormData({
         ...formData,
-        [name]: numericValue,
+        [name]: formatted,
       });
     } else {
       setFormData({
@@ -41,12 +46,12 @@ const Application = () => {
       });
     }
   };
-
+  
 
   const validateForm = () => {
-    const { studentId, major, birthDate, gender, phoneNumber, motivation } = formData;
+    const { studentId,  birthDate, gender, phoneNumber, motivation } = formData;
 
-    if ( !studentId || !major || !birthDate || !gender || !phoneNumber || !motivation) {
+    if ( !studentId || !birthDate || !gender || !phoneNumber || !motivation) {
       alert('모든 필드를 채워주세요.');
       return false;
     }
@@ -68,26 +73,8 @@ const Application = () => {
     }
   
     try {
-      // ✅ 1. 현재 동아리 정보 불러오기
-      const clubRes = await axios.get(`${import.meta.env.VITE_APP_URL}/api/clubs/${id}`, {
-        headers: {
-          Authorization: `Bearer Bearer ${token}`
-        }
-      });
-  
-      const joinRequirement = clubRes.data?.data?.joinRequirement;
-  
-      // ✅ 2. 학과 비교
-      if (joinRequirement && joinRequirement !== formData.major) {
-        alert(`가입 가능 학과는 "${joinRequirement}"입니다.`);
-        return;
-      }
-  
-      console.log("전송데이터:", formData);
-  
-      // ✅ 3. 실제 가입 요청 보내기
       const response = await axios.post(
-        `${import.meta.env.VITE_APP_URL}/api/clubs/${id}/applications`,
+        `${import.meta.env.VITE_APP_URL}/api/clubs/${clubId}/applications`,
         formData,
         {
           headers: {
@@ -95,16 +82,26 @@ const Application = () => {
           },
         }
       );
-  
+    
       if (response.status === 200) {
         alert('가입 신청이 성공적으로 완료되었습니다.');
-        navigate('/main'); // 가입 완료 후 메인으로 이동 등 처리
+        navigate('/main');
       }
     } catch (error) {
-      console.error('Error submitting application:', error);
-      alert('서버와의 통신 중 오류가 발생했습니다. 다시 시도해 주세요.');
+      const { code, message } = error.response?.data || {};
+    
+      if (code === "MAJOR_REQUIREMENT_NOT_MET") {
+        alert(message);
+      } else if (code === "DUPLICATE_APPLICATION") {
+        alert(message);
+      } else {
+        console.error('가입 신청 실패:', error);
+        alert('❌ 서버와의 통신 중 오류가 발생했습니다. 다시 시도해 주세요.');
+      }
     }
+    
   };
+  
   
 
   return (

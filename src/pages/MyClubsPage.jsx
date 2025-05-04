@@ -4,18 +4,29 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 // 각 페이지 컴포넌트 import
 import MyClubs from '../components/MyClubs/MyClubs.jsx';
 import MyClubsDetail from '../components/MyClubs/MyClubsDetail.jsx';
+import NoticeDetail from '../components/Noti/NoticeDetail.jsx';
+import NoticeList from '../components/Noti/NoticeList.jsx';
+import RecuritDetail from '../components/Recurit/RecuritDetail';
+import RecuritList from '../components/Recurit/RecuritList';
+
 
 
 
 const MyClubsPage = () => {
     return (
       <Routes>
-        {/* 기본 경로로 접근 시 로그인 페이지로 리다이렉트 */}
-        <Route path="/" element={<Navigate to="/myclubs/home" replace />} />
-        <Route path="/home" element={<MyClubs/>} />
-        <Route path=":myclubsid" element={<MyClubsDetail/>} />
-     
-      </Routes>
+      <Route path="/" element={<Navigate to="home" replace />} />
+      <Route path="home" element={<MyClubs />} />
+    
+      <Route path=":clubId" element={<MyClubsDetail />}>
+        <Route index element={<Navigate to="notice" replace />} />
+        <Route path="notice" element={<NoticeList />} />
+        <Route path="notice/:noticeId" element={<NoticeDetail />} />
+       <Route path="recruit" element={<RecuritList />} />
+       <Route path="recruit/:recruitId" element={<RecuritDetail/>} />
+      </Route> {/* ✅ 반드시 닫아야 함 */}
+    </Routes>
+    
     );
   };
   
