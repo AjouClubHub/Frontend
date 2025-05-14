@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import {  useParams ,useNavigate } from "react-router-dom";
 
 const MemberList_new = () => {
   const [applications, setApplications] = useState([]);
@@ -8,7 +8,12 @@ const MemberList_new = () => {
   const [rejectionReason, setRejectionReason] = useState("");
   const [showModal, setShowModal] = useState(false); // 모달 표시 여부
 
+  const navigate = useNavigate();
+
   const { clubId } = useParams();
+
+
+
 
   useEffect(() => {
     const fetchApplications = async () => {
@@ -99,38 +104,56 @@ const MemberList_new = () => {
   };
 
   return (
+    
     <div>
       <h2>가입 신청 목록</h2>
       {applications.length === 0 ? (
         <p>신청자가 없습니다.</p>
       ) : (
         <ul style={{ listStyle: "none", padding: 0 }}>
-          {applications.map((app) => (
+        {applications.map((app) => {
+          console.log("🔍 app 구조 확인:", app); // ✅ 여기 추가
+      
+          return (
             <li
               key={app.applicationId}
+              onClick={() =>
+                navigate(`/clubsadmin/${clubId}/membernew/${app.applicationId}`)
+              }
               style={{
                 marginBottom: "20px",
                 padding: "12px",
                 border: "1px solid #ddd",
                 borderRadius: "8px",
                 backgroundColor: "#f9f9f9",
+                cursor: "pointer",
               }}
             >
               <strong>{app.memberName}</strong>님 - 신청일:{" "}
               {new Date(app.appliedAt).toLocaleDateString()}
               <br />
               <button
-                onClick={() => handleApprove(app.applicationId)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleApprove(app.applicationId);
+                }}
                 style={{ marginRight: "10px" }}
               >
                 승인
               </button>
-              <button onClick={() => handleRejectClick(app.applicationId)}>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRejectClick(app.applicationId);
+                }}
+              >
                 거절
               </button>
             </li>
-          ))}
-        </ul>
+          );
+        })}
+      </ul>
+      
       )}
 
       {/* ✅ 거절 사유 입력 모달 */}

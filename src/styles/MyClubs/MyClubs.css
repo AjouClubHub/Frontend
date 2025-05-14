@@ -1,60 +1,74 @@
-.myclubs-container {
-  padding: 30px;
-}
-
-.club-status-filter {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 20px;
-  padding-bottom: 20px;
-  font-size: 18px;
-  font-weight: 600;
-  border-bottom: 2px solid #ddd; /* ✅ 이 줄이 구분선 역할! */
-}
-
-.club-status-filter button {
-  background: none;
-  border: none;
-  font-size: 18px;
-  font-weight: 600;
-  color: #999;
-  cursor: pointer;
-  position: relative;
-}
-
-.club-status-filter button.active {
-  color: #007bff;
-}
-
-.club-status-filter button.active::after {
-  content: "";
-  display: block;
-  width: 100%;
-  height: 3px;
-  background-color: #007bff;
-  margin-top: 4px;
-  border-radius: 2px;
-}
-
-
-.club-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 20px;
-}
-
 /* 클럽 카드 스타일 */
 .club-card {
-  position:relative;
+  position: relative;
   background-color: #f9f9f9;
   border: 1px solid #ccc;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
   padding: 15px;
-  position: relative;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  position: relative;
+}
+
+/* 상태 배너를 카드 상단에 고정 */
+.status-banner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 10px 0;
+
+  text-align: center;
+  font-weight: bold;
+  color: white;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+.club-card h3 {
+  margin-top: 50px;
+}
+
+/* 상태별 배경색 */
+.status-pending {
+  background-color: #8988f1; /* 신청 대기 중 */
+}
+
+.status-approved {
+  background-color: #98fb98; /* 승인 완료 */
+}
+
+.status-rejected {
+  display: flex; /* 버튼을 가로로 배치 */
+  background-color: #d9534f; /* 신청 거절 */
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  border-radius: 8px;
+  box-sizing: border-box;
+  text-align: center; /* 텍스트가 가운데 오도록 설정 */
+}
+.status-rejected h3 {
+  margin: 0; /* h3에 기본 margin 제거 */
+  font-size: 16px; /* 글씨 크기 조정 */
+}
+
+/* 버튼 스타일 */
+.view-rejection-btn {
+  padding: 10px 20px;
+  background-color: white;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-left: 10px; /* 버튼과 텍스트 간 간격 */
+
+}
+
+.view-rejection-btn:hover {
+  background-color: #e68900;
 }
 
 .club-image {
@@ -65,46 +79,65 @@
   margin-bottom: 10px;
 }
 
-/* 상태 표시 오버레이 */
-.pending-overlay,
-.rejected-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  padding: 5px;
-  text-align: center;
-  font-weight: bold;
+/* 신청 상태 표시 텍스트 */
+.status-text {
+  font-size: 0.9rem;
+  font-weight: normal;
+  color: #333;
+}
+
+/* 신청 상태 배너가 표시될 때 위치 */
+.club-card .status-banner {
+  top: -10px; /* 배너를 카드 위로 살짝 밀어내기 */
+}
+
+/* 클럽 카드 내용 스타일 */
+.club-card .club-info {
+  margin-top: 40px; /* 배너를 제외한 나머지 내용은 아래로 배치 */
+}
+
+.club-info h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.club-info p {
+  font-size: 14px;
+  color: #666;
+}
+
+.withdraw-button {
+  padding: 10px 20px;
+  border: none;
+  background-color: red;
   color: white;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-  box-sizing: border-box;
+  cursor: pointer;
+  margin-top: 10px;
 }
 
-.pending-overlay {
-  background-color: #8988f1;
+.withdraw-button:hover {
+  background-color: darkred;
 }
 
-.rejected-overlay {
-  background-color: #d9534f;
+.rejection-info {
+  display:flex;
+  align-items: center;
+  gap: 10px;
 }
 
-/* ✅ 승인 배너 */
-.approved-banner {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  padding: 5px;
-  text-align: center;
-  font-weight: bold;
-  color: #2e7d32;
-  background-color: #c8e6c9;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-  font-size: 0.95rem;
+/* 사유 조회하기 버튼 아래로 배치 */
+.rejection-button {
+  margin-left: 5px;
+  padding: 10px 20px;
+  background-color: white;
+  color: black;
+  border: none;
+  cursor: pointer;
 }
 
+.rejection-button:hover {
+  background-color: white;
+}
 
 /* 반응형: 모바일 기준 조정 */
 @media screen and (max-width: 768px) {

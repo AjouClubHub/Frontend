@@ -1,22 +1,16 @@
-import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-
-import Main from '../components/Main/Main'
-import Application from '../components/Club/Application';
-
+import { Routes, Route, useOutletContext } from "react-router-dom";
+import Main from  "../components/Main/Main"
+import Application from "../components/Club/Application"
 
 const MainPage = () => {
-    return (
-        <div>
-            <Routes>
-            <Route path="/" element={<Navigate to="/main/home" replace />} />
-            <Route path="/home" element={<Main />} />
-            <Route path="/:clubId/application" element={< Application/>} />
-            </Routes>
-            
+  const { selectedCategory } = useOutletContext(); // Layout에서 넘긴 값 받기
 
-        </div>
-    )
-}
+  return (
+    <Routes>
+      <Route path="home" element={<Main selectedCategory={selectedCategory} />} />
+      <Route path=":clubId/application" element={<Application />} />
+    </Routes>
+  );
+};
 
 export default MainPage;

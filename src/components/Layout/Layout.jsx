@@ -3,7 +3,6 @@ import { Outlet, useLocation } from "react-router-dom";
 import MainNavbar from "../Main/MainNavbar"; // 메인 페이지용 Navbar
 import SimpleNavbar from "../Main/SimpleNavbar"; // 일반 페이지용 Navbar
 import Sidebar from "../Main/Sidebar";
-import Main from "../Main/Main"
 
 const Layout = () => {
   const location = useLocation();
@@ -17,7 +16,6 @@ const Layout = () => {
 
   const isAuthPage = path.startsWith("/auth");
   const isMainPage = path.startsWith("/main");
-  
 
   return (
     <>
@@ -27,10 +25,10 @@ const Layout = () => {
         </>
       )}
       <div className={!isAuthPage ? "layout-wrapper" : ""}>
-        {isMainPage && <Sidebar onCategoryClick={handleCategoryChange} />
-      }
+        {isMainPage && <Sidebar onCategoryClick={handleCategoryChange} />}
         <div className="page-content">
-        {isMainPage ? <Main selectedCategory={selectedCategory} /> : <Outlet />}
+          {/* ✅ 여기 핵심 */}
+          <Outlet context={{ selectedCategory }} />
         </div>
       </div>
     </>

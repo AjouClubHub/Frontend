@@ -41,22 +41,39 @@ const ClubsAdmin = () => {
       <h2>내가 관리 중인 동아리</h2>
 
       <div className="club-list">
-        {currentClubs.map((club) => (
-          <div
-            key={club.id}
-            className="club-card"
-            onClick={() => navigate(`/clubsadmin/${club.id}`)}
-          >
-            <h3>{club.name}</h3>
-            <p><strong>소개:</strong> {club.description}</p>
-            <p><strong>동방 위치:</strong> {club.location}</p>
-            <p><strong>키워드:</strong> {club.keyword}</p>
-            <p><strong>총 인원:</strong> {club.memberCount}명</p>
-            <p><strong>승인 대기:</strong> {club.pendingApplications}명</p>
-            <p><strong>공지사항 수:</strong> {club.announcementCount}개</p>
-          </div>
-        ))}
-      </div>
+  {currentClubs.map((club) => (
+    <div
+      key={club.id}
+      className="club-card"
+      onClick={() => navigate(`/clubsadmin/${club.id}`)}
+      style={{ cursor: 'pointer', border: '1px solid #ccc', padding: '16px', borderRadius: '8px', marginBottom: '16px' }}
+    >
+      {/* ✅ 이미지 추가 */}
+      {club.imaUrl && (
+        <img
+          src={club.imaUrl}
+          alt={`${club.name} 로고`}
+          style={{
+            width: '100%',
+            height: '180px',
+            objectFit: 'cover',
+            borderRadius: '8px',
+            marginBottom: '12px'
+          }}
+        />
+      )}
+
+      <h3>{club.name}</h3>
+      <p><strong>소개:</strong> {club.description}</p>
+      <p><strong>동방 위치:</strong> {club.location}</p>
+      <p><strong>키워드:</strong> {club.keyword}</p>
+      <p><strong>총 인원:</strong> {club.memberCount}명</p>
+      <p><strong>승인 대기:</strong> {club.pendingApplications}명</p>
+      <p><strong>공지사항 수:</strong> {club.announcementCount}개</p>
+    </div>
+  ))}
+</div>
+
 
       {myCreatedClubs.length > itemsPerPage && (
         <div className="pagination-wrapper">

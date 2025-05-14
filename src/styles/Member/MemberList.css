@@ -1,0 +1,16 @@
+.member-filter-buttons button {
+    margin-right: 10px;
+    padding: 6px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    background: white;
+    cursor: pointer;
+    border-radius: 6px;
+  }
+  
+  .member-filter-buttons .active {
+    background: #2f80ed;
+    color: white;
+    border-color: #2f80ed;
+  }
+  
