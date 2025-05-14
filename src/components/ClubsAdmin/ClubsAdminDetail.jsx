@@ -62,7 +62,7 @@ const ClubsAdminDetail = () => {
 
         <button
           className={isActive("member") ? "active" : ""}
-          onClick={() => navigate("member")}
+          onClick={() => navigate(`/clubsadmin/${clubId}/member`)}
         >
           멤버
         </button>

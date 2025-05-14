@@ -5,6 +5,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import LoginForm from '../components/Auth/LoginForm.jsx';
 import SignUpForm from '../components/Auth/SignUpForm.jsx';
 import Setting from '../components/Auth/Setting.jsx'
+import Notification from '../components/Auth/Notification.jsx'
 
 
 const AuthPage = () => {
@@ -15,6 +16,7 @@ const AuthPage = () => {
         <Route path="/login" element={<LoginForm />} />
         <Route path="/signup" element={<SignUpForm />} />
         <Route path="/setting" element={<Setting />} />
+        <Route path="/notification" element={<Notification />} />
       </Routes>
     );
   };

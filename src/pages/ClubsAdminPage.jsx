@@ -6,6 +6,8 @@ import ClubsAdmin from '../components/ClubsAdmin/ClubsAmdin';
 import ClubsAdminDetail from '../components/ClubsAdmin/ClubsAdminDetail'
 import MemberList from '../components/Member/MemberList';
 import MemberList_new from '../components/Member/MemberList_new';
+import MemberDetail from '../components/Member/MemberDetail';
+import MemberListDetail_new from '../components/Member/MemberListDetail_new';
 import NoticeList from '../components/Noti/NoticeList';
 import NoticeCreate from '../components/Noti/NoticeCreate';
 import NoticeDetail from '../components/Noti/NoticeDetail';
@@ -38,8 +40,15 @@ const ClubsAdminPage = () => {
        <Route path="notice/:announcementId" element={<NoticeDetail />} />
        <Route path="noticecreate" element={<NoticeCreate/>} />
        <Route path="recruitcreate" element={<RecuritCreate/>} />
-       <Route path="recruit" element={<RecuritList isManager={true}/>} />
-       <Route path="recruit/:recruitId" element={<RecuritDetail/>} />
+       <Route path="recruitedit/:scheduleId" element={<RecuritCreate />} />
+       <Route path="recruit" element={<RecuritList />} />
+       <Route path="recruit/:scheduleId" element={<RecuritDetail/>} />
+       <Route path="member" element={<MemberList/>} />
+       <Route path="member/:memberId" element={<MemberDetail/>} />
+       <Route path="membernew" element={<MemberList_new/>} />
+       <Route path="membernew/:applicationId" element={<MemberListDetail_new/>} />
+       
+
       </Route>
 
     

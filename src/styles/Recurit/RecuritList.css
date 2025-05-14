@@ -1,106 +1,189 @@
+/* 캘린더 컨테이너 */
 .calendar-wrapper {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 1rem;
-  }
-  
-  /* 네비게이션 영역 (년도/월 표시 + 좌우 버튼) */
-  .react-calendar__navigation {
-    width: 100%;
-    height: 3.5rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0 1rem;
-    margin-bottom: 0.5rem;
-    background-color: white;      /* 달력 전체 배경 */
-  border: none;                 /* 기본 테두리 제거 */
-  font-family: inherit;
-  }
+  background-color: #fff; /* 흰색 배경 */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
 
-  .react-calendar__tile {
-    height: 80px !important;  /* 기존보다 크게 */
-    overflow: visible;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    background-color: white;      /* 각 날짜 타일 배경 */
-  border: 1px solid #eee;       /* 부드러운 테두리 */
-  transition: background-color 0.2s;
-  }
+/* 캘린더 제목 */
+.calendar-wrapper h2 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+  text-align: left;
+  width:100%
+}
+.schedule-form {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end; /* 버튼을 오른쪽 끝으로 배치 */
+}
+/* 일정 등록하기 버튼 스타일 */
+.schedule-form .create-button {
+  background-color: #4e90fd;
+  color: white;
+  font-size: 16px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  margin-bottom: 10px;
+  transition: background-color 0.3s ease;
+}
 
-  .react-calendar__tile:enabled:hover {
-    background-color: #f0f8ff;    /* hover 시 연한 파랑 */
-  }
-  
-  
-  .react-calendar__navigation__label {
-    font-size: 18px;
-    font-weight: 700;
-    border: none;
-    background-color: #fff;
-    cursor: default;
-  }
-  
-  .react-calendar__navigation__arrow {
-    font-size: 20px;
-    border: none;
-    background: none;
-    cursor: pointer;
-  }
-  
-  /* 이전/다음 버튼 안 보이게 하고 싶다면 opacity 0 */
-  .react-calendar__navigation__prev-button,
-  .react-calendar__navigation__next-button {
-    opacity: 0;
-    pointer-events: none;
-  }
-  .dot {
-    font-size: 0.75rem;
-    text-align: center;
-    font-weight: 600;
-    white-space: normal;  /* ✅ 줄바꿈 허용 */
-    word-break: break-word;
-    margin-top: 4px;
-    padding: 0 2px;
-  }
-  
-  
-  .dot-open {
-    color: #007bff; /* 파란색 */
-  }
-  
-  .dot-closed {
-    color: #999; /* 회색 또는 필요시 다른 색 */
-  }
-  
-  
-  .schedule-form {
-    margin-top: 20px;
-  }
-  
-  .schedule-form input {
-    margin-right: 10px;
-    padding: 6px;
-  }
-  
-  .schedule-list {
-    margin-top: 30px;
-  }
-  
-  .form-area {
-    margin-top: 10px;
-  }
-  
-  .create-button {
-    margin: 10px 0;
-    padding: 8px 16px;
-    font-size: 14px;
-    border-radius: 6px;
-    background-color: #2f80ed;
-    color: white;
-    border: none;
-    cursor: pointer;
-  }
-  
+.schedule-form .create-button:hover {
+  background-color: #3578e5;
+}
+
+/* 캘린더 스타일 */
+.react-calendar {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.react-calendar__tile {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 10px;
+  transition: background-color 0.2s ease;
+}
+
+.react-calendar__tile:hover {
+  background-color: #e6f7ff;
+}
+
+.react-calendar__tile:active {
+  background-color: #cce5ff;
+}
+
+.react-calendar__tile--now {
+  background-color: #ffeb3b;
+  font-weight: bold;
+  color: #333;
+}
+
+.react-calendar__tile .dot {
+  display: inline-block;
+  height: 8px;
+  width: 8px;
+  border-radius: 50%;
+  background-color: #4e90fd;
+  margin-top: 5px;
+  text-align: center;
+}
+
+/* 일정 제목 */
+.schedule-title {
+  font-size: 14px;
+  color: #333;
+  margin-top: 5px;
+}
+
+/* 일정 목록 스타일 */
+.schedule-list {
+  margin-top: 40px;
+}
+
+.schedule-list h3 {
+  font-size: 20px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.schedule-list ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.schedule-list li {
+  background-color: #fff;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.schedule-list li:hover {
+  background-color: #f9f9f9;
+}
+
+.schedule-list li strong {
+  font-weight: bold;
+  color: #4e90fd;
+}
+
+/* 페이지네이션 스타일 */
+.pagination-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.page-item {
+  display: inline-block;
+  margin: 0 5px;
+}
+
+.page-link {
+  padding: 8px 16px;
+  font-size: 14px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  color: #333;
+  cursor: pointer;
+}
+
+.page-link:hover {
+  background-color: #e6f7ff;
+}
+
+.page-item.active .page-link {
+  background-color: #4e90fd;
+  color: white;
+  border-color: #4e90fd;
+}
+
+/* 모달 오버레이 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* 모달 콘텐츠 */
+.modal-content {
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  max-width: 90%;
+  width: 1000px;
+  height: auto;
+  max-height: 90%;
+  overflow-y: auto;
+  position: relative;
+  z-index: 9999;
+}
+

@@ -1,29 +1,88 @@
 .notice-detail {
-    max-width: 800px;
-    margin: 40px auto;
-    padding: 20px;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-  
-  .notice-detail h2 {
-    font-size: 24px;
-    margin-bottom: 20px;
-  }
-  
-  .notice-info {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 20px;
-  }
-  
-  .notice-content {
-    font-size: 16px;
-    line-height: 1.6;
-    color: #333;
-  }
-  
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.notice-detail h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.notice-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.notice-content {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+}
+
+/* 수정 모드에서 입력 폼 스타일 */
+.notice-detail input, 
+.notice-detail textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  margin-bottom: 20px;
+  background: #f9f9f9;
+  color: #333;
+  resize: vertical;
+}
+
+.notice-detail input:focus, 
+.notice-detail textarea:focus {
+  outline: none;
+  border-color: #4e90fd;
+  background: #fff;
+}
+
+.notice-detail button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #4e90fd;
+  color: white;
+  font-size: 16px;
+}
+
+.notice-detail button:hover {
+  background: #3578e5;
+}
+
+/* 수정 버튼, 저장 버튼, 취소 버튼 구분 */
+.edit-btn {
+  background-color: #ff9f00;
+}
+
+.save-btn {
+  background-color: #28a745;
+}
+
+.cancel-btn {
+  background-color: #6c757d;
+}
+
+.edit-btn:hover {
+  background-color: #e68900;
+}
+
+.save-btn:hover {
+  background-color: #218838;
+}
+
+.cancel-btn:hover {
+  background-color: #5a6268;
+}

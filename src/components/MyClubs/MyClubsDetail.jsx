@@ -11,7 +11,6 @@ const MyClubsDetail = () => {
   const [club, setClub] = useState(null);
   const [loading, setLoading] = useState(true);
 
-
   useEffect(() => {
     const fetchClubDetail = async () => {
       const token = localStorage.getItem("accessToken");
@@ -24,10 +23,7 @@ const MyClubsDetail = () => {
             },
           }
         );
-        const clubData = res.data.data;
-  
-        setClub(clubData);
-      
+        setClub(res.data.data);
       } catch (err) {
         console.error("가입한 클럽 상세정보 불러오기 실패:", err);
         setClub(null);
@@ -35,10 +31,9 @@ const MyClubsDetail = () => {
         setLoading(false);
       }
     };
-  
+
     fetchClubDetail();
   }, [clubId]);
-  
 
   const isActive = (tab) => location.pathname.includes(tab);
 
@@ -61,6 +56,12 @@ const MyClubsDetail = () => {
         >
           일정
         </button>
+        <button
+          className={isActive("member") ? "active" : ""}
+          onClick={() => navigate(`/myclubs/${clubId}/member`)}
+        >
+          멤버
+        </button>
       </div>
 
       <div className="clubs-admin-detail-container">
@@ -76,7 +77,7 @@ const MyClubsDetail = () => {
 
         <main className="club-main">
           <div className="detail-content">
-          <Outlet context={{ isManager: false }} />
+            <Outlet context={{ isManager: false }} />
           </div>
         </main>
       </div>
