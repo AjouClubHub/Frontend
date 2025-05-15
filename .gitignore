@@ -32,3 +32,4 @@ dist-ssr
 .vite.config.js
 
 node_modules/
+.vercel

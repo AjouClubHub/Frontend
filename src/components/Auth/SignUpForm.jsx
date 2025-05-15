@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import '../../styles/Auth/SignupForm.css';
+import '../../styles/Auth/SignUpForm.css';
 import { FaArrowLeft } from "react-icons/fa";
 import DepartmentParts from "../../assets/Data/DepartmentParts";
 import Select from "react-select";
