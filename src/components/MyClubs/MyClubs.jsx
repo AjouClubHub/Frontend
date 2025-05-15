@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate ,useParams } from "react-router-dom";
-import "../../styles/MyClubs/Myclubs.css";
+import "../../styles/MyClubs/MyClubs.css";
 
 const MyClubs = () => {
   const [joinedClubs, setJoinedClubs] = useState([]);
