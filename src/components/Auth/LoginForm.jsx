@@ -27,7 +27,9 @@ const LoginForm = () => {
         .post(`${import.meta.env.VITE_APP_URL}/api/auth/login`, {
           email: email,
           password: password
-        })
+        }), {
+          withCredentials: true, // 쿠키를 함께 보내도록 설정
+        }
         .then((result) => {
           const token = result.data.token;
           localStorage.removeItem("accessToken");
