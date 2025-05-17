@@ -18,7 +18,7 @@ const Main = () => {
         const token = localStorage.getItem('accessToken');
         const res = await axios.get(
           `${import.meta.env.VITE_APP_URL}/api/clubs`,
-          { headers: { Authorization: `Bearer ${token}` } }
+          { headers: { Authorization: `Bearer Bearer ${token}` } }
         );
         setAllClubs(res.data.data);
       } catch (err) {
