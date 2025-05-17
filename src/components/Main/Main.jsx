@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useOutletContext, useNavigate } from 'react-router-dom';
-import '../../styles/Main/MainPage.css';
+import '../../styles/Main/Main.css';
 
 const Main = () => {
   const navigate = useNavigate();
