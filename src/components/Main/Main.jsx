@@ -52,7 +52,7 @@ useEffect(() => {
       const token = localStorage.getItem('accessToken');
       const res = await axios.get(
         `${import.meta.env.VITE_APP_URL}/api/recruitments`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer Bearer ${token}` } }
       );
       const data = res.data.data || [];
       

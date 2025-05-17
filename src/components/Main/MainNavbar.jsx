@@ -56,7 +56,7 @@ const MainNavbar = ({
           } 
            >모집중</button>
           <button onClick={() => onRecruitmentChange("모집마감")}>모집마감</button>
-+         <button onClick={() => onRecruitmentChange("상시모집")}>상시모집</button>
+        <button onClick={() => onRecruitmentChange("상시모집")}>상시모집</button>
         </div>
       )}
 
