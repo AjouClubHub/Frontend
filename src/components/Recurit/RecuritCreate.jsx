@@ -1,170 +1,97 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
-import "../../styles/Recurit/RecuritCreate.css"; // 기존 스타일 재사용
+import React, { useState } from 'react';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import axios from 'axios';
+import '../../styles/Recurit/RecuritCreate.css';
 
 const RecuritCreate = () => {
-  const { clubId, scheduleId } = useParams();  // scheduleId로 수정할 일정을 받음
+  const { clubId } = useParams();
   const navigate = useNavigate();
+  const { state } = useLocation();
+  const mode = state?.mode || 'recruit';
 
-  const [form, setForm] = useState({
-    title: "",
-    content: "",
-    startTime: "",
-    endTime: "",
-  });
-
+  const initialForm = {
+    title: '', requirements: '', alwaysOpen: false, startDate: '', endDate: '',
+    content: '', startTime: '', endTime: ''
+  };
+  const [form, setForm] = useState(initialForm);
   const [error, setError] = useState(null);
 
-  // 일정 데이터를 불러오기 위한 useEffect (수정 모드일 때)
-  useEffect(() => {
-    if (scheduleId) {
-      fetchSchedule(scheduleId);  // scheduleId가 있으면 수정 모드
-    }
-  }, [scheduleId]);
-
-  const fetchSchedule = async (scheduleId) => {
-    try {
-      const token = localStorage.getItem("accessToken");
-      const res = await axios.get(
-        `${import.meta.env.VITE_APP_URL}/api/clubs/${clubId}/schedules/${scheduleId}`,
-        {
-          headers: {
-            Authorization: `Bearer Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      setForm({
-        title: res.data.data.title,
-        content: res.data.data.content,
-        startTime: res.data.data.startTime,
-        endTime: res.data.data.endTime,
-      });
-    } catch (err) {
-      console.error("일정 조회 실패:", err);
-      setError("일정 정보를 불러오는 데 실패했습니다.");
-    }
+  const handleChange = e => {
+    const { name, value, type, checked } = e.target;
+    setForm(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
   };
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    const token = localStorage.getItem("accessToken");
-
-    console.log("요청할 데이터:", form);  // 보내는 데이터
-    console.log("Authorization 헤더:", `Bearer Bearer ${token}`);  // Authorization 헤더 확인
-
+    const token = localStorage.getItem('accessToken');
     try {
-      if (scheduleId) {
-        // 수정 모드: PUT 요청
-        await updateSchedule(scheduleId, form, token);
+      if (mode === 'recruit') {
+        await axios.post(
+          `${import.meta.env.VITE_APP_URL}/api/clubs/${clubId}/recruitments`,
+          { title: form.title, requirements: form.requirements, alwaysOpen: form.alwaysOpen, startDate: form.startDate, endDate: form.endDate },
+          { headers: { Authorization: `Bearer Bearer${token}` } }
+        );
+        alert('모집공고가 등록되었습니다');
       } else {
-        // 등록 모드: POST 요청
-        await createSchedule(form, token);
+        await axios.post(
+          `${import.meta.env.VITE_APP_URL}/api/clubs/${clubId}/schedules`,
+          { title: form.title, content: form.content, startTime: form.startTime, endTime: form.endTime },
+          { headers: { Authorization: `Bearer Bearer ${token}` } }
+        );
+        alert('일정이 등록되었습니다');
       }
+      navigate(`/clubsadmin/${clubId}/recurit`);
     } catch (err) {
-      console.error("일정 등록/수정 실패:", err);
-      setError("등록/수정에 실패했습니다. 입력값과 권한을 확인해주세요.");
-    }
-  };
-
-  // 일정 등록 함수 (POST)
-  const createSchedule = async (form, token) => {
-    try {
-      const url = `${import.meta.env.VITE_APP_URL}/api/clubs/${clubId}/schedules`;
-
-      const response = await axios.post(url, form, {
-        headers: {
-          Authorization: `Bearer Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      alert("일정이 등록되었습니다!");
-      navigate(`/clubs/${clubId}/schedules/${response.data.data.id}`); // 새로 등록된 일정의 상세 페이지로 이동
-    } catch (err) {
-      setError("일정 등록 중 오류가 발생했습니다.");
-      throw err;
-    }
-  };
-
-  // 일정 수정 함수 (PUT)
-  const updateSchedule = async (scheduleId, form, token) => {
-    try {
-      const url = `${import.meta.env.VITE_APP_URL}/api/clubs/${clubId}/schedules/${scheduleId}`;
-
-      const response = await axios.put(url, form, {
-        headers: {
-          Authorization: `Bearer Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      alert("일정이 수정되었습니다!");
-      navigate(`/clubsadmin/${clubId}/recruit/${response.data.data.id}`); // 수정된 일정의 상세 페이지로 이동
-    } catch (err) {
-      setError("일정 수정 중 오류가 발생했습니다.",err);
-
+      console.error('등록 실패:', err);
+      setError('등록 중 오류가 발생했습니다');
     }
   };
 
   return (
     <div className="recruit-create-wrapper">
-      <h2>🗓️ 일정 {scheduleId ? "수정" : "등록"}</h2>
+      <h2>{mode === 'recruit' ? '모집공고 등록' : '일정 등록'}</h2>
       <form onSubmit={handleSubmit} className="recruit-form">
         <label>
-          일정 제목
-          <input
-            type="text"
-            name="title"
-            value={form.title}
-            onChange={handleChange}
-            placeholder="예: OT 일정, 정기모임 등"
-            required
-          />
+          제목
+          <input type="text" name="title" value={form.title} onChange={handleChange} required />
         </label>
-
-        <label>
-          내용
-          <textarea
-            name="content"
-            value={form.content}
-            onChange={handleChange}
-            placeholder="일정 상세 내용을 입력하세요"
-            required
-          />
-        </label>
-
-        <label>
-          시작 일시
-          <input
-            type="datetime-local"
-            name="startTime"
-            value={form.startTime}
-            onChange={handleChange}
-            required
-          />
-        </label>
-
-        <label>
-          종료 일시
-          <input
-            type="datetime-local"
-            name="endTime"
-            value={form.endTime}
-            onChange={handleChange}
-            required
-          />
-        </label>
-
+        {mode === 'recruit' ? (
+          <>
+            <label>요구사항<input type="text" name="requirements" value={form.requirements} onChange={handleChange} /></label>
+            <fieldset className="always-open-fieldset">
+              <legend>상시모집 여부</legend>
+              <label>
+                <input
+                  type="radio"
+                  name="alwaysOpen"
+                  value="true"
+                  checked={form.alwaysOpen === true}
+                  onChange={() => setForm(prev => ({ ...prev, alwaysOpen: true }))}
+                /> 예
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="alwaysOpen"
+                  value="false"
+                  checked={form.alwaysOpen === false}
+                  onChange={() => setForm(prev => ({ ...prev, alwaysOpen: false }))}
+                /> 아니오
+              </label>
+            </fieldset>
+            <label>시작일<input type="date" name="startDate" value={form.startDate} onChange={handleChange} required /></label>
+            <label>종료일<input type="date" name="endDate" value={form.endDate} onChange={handleChange} required /></label>
+          </>
+        ) : (
+          <>
+            <label>내용<textarea name="content" value={form.content} onChange={handleChange} required /></label>
+            <label>시작시간<input type="datetime-local" name="startTime" value={form.startTime} onChange={handleChange} required /></label>
+            <label>종료시간<input type="datetime-local" name="endTime" value={form.endTime} onChange={handleChange} required /></label>
+          </>
+        )}
         {error && <p className="error-text">{error}</p>}
-
         <div className="button-group">
-          <button type="submit">{scheduleId ? "수정하기" : "등록하기"}</button>
+          <button type="submit">등록</button>
           <button type="button" onClick={() => navigate(-1)}>취소</button>
         </div>
       </form>

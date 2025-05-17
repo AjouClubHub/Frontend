@@ -13,88 +13,54 @@ const RecuritList = () => {
   const { isManager } = useOutletContext();
 
   useEffect(() => {
-    const fetchSchedules = async () => {
-      const token = localStorage.getItem('accessToken');
-      const start = new Date().toISOString();
-      const end = new Date(Date.now() + 1000 * 60 * 60 * 24 * 60).toISOString(); // 60일 후
-
-      try {
-        const res = await axios.get(
-          `${import.meta.env.VITE_APP_URL}/api/clubs/${clubId}/schedules?start=${start}&end=${end}`,
-          {
-            headers: {
-              Authorization: `Bearer Bearer ${token}`,
-            },
-          }
-        );
-
-        const data = res.data?.data || [];
-
-        // 날짜별로 일정 분해
-        const parsedSchedules = data.flatMap((item) => {
-          const range = getDateRange(item.startTime, item.endTime);
-          return range.map((date) => ({
-            id: item.id,
-            date,
-            title: item.title,
-          }));
-        });
-
-        setSchedules(parsedSchedules);
-      } catch (err) {
-        console.error('일정 불러오기 실패:', err);
-      }
-    };
-
     fetchSchedules();
   }, [clubId]);
 
+  const fetchSchedules = async () => {
+    const token = localStorage.getItem('accessToken');
+    const start = new Date().toISOString();
+    const end = new Date(Date.now() + 1000 * 60 * 60 * 24 * 60).toISOString();
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_APP_URL}/api/clubs/${clubId}/schedules?start=${start}&end=${end}`,
+        { headers: { Authorization: `Bearer Bearer ${token}` } }
+      );
+      setSchedules(parseSchedules(res.data.data || []));
+    } catch (err) {
+      console.error('일정 불러오기 실패:', err);
+    }
+  };
+
+  const parseSchedules = data => data.flatMap(item => {
+    const dates = getDateRange(item.startTime, item.endTime);
+    return dates.map(d => ({ id: item.id, date: d, title: item.title }));
+  });
+
   const getDateRange = (start, end) => {
     const result = [];
-    const current = new Date(start);
+    const cur = new Date(start);
     const last = new Date(end);
-    while (current <= last) {
-      result.push(current.toISOString().split('T')[0]);
-      current.setDate(current.getDate() + 1);
+    while (cur <= last) {
+      result.push(cur.toISOString().split('T')[0]);
+      cur.setDate(cur.getDate() + 1);
     }
     return result;
   };
 
-  const getTileContent = ({ date }) => {
+  const handleTileClick = date => {
     const dateStr = date.toISOString().split('T')[0];
-    const matches = schedules.filter((s) => s.date === dateStr);
-    return matches.length > 0 ? (
-      <div className="dot" title={matches.map((match) => match.title).join(", ")}>
-        {matches.map((match, index) => (
-          <div key={index} className="schedule-title">-{match.title}</div>
-        ))}
-      </div>
-    ) : null;
+    const found = schedules.find(s => s.date === dateStr);
+    if (found) navigate(`/clubsadmin/${clubId}/recurit/${found.id}`);
   };
 
   const grouped = Object.values(
     schedules.reduce((acc, curr) => {
-      if (!acc[curr.id]) {
-        acc[curr.id] = {
-          id: curr.id,
-          title: curr.title,
-          dates: [curr.date],
-        };
-      } else {
-        acc[curr.id].dates.push(curr.date);
-      }
+      (acc[curr.id] = acc[curr.id] || { id: curr.id, title: curr.title, dates: [] }).dates.push(curr.date);
       return acc;
     }, {})
-  );
-
-  const renderedSchedules = grouped.map((r) => {
+  ).map(r => {
     const sorted = r.dates.sort();
-    return {
-      id: r.id,
-      title: r.title,
-      start: sorted[0],
-      end: sorted[sorted.length - 1],
-    };
+    return { ...r, start: sorted[0], end: sorted[sorted.length - 1] };
   });
 
   return (
@@ -102,41 +68,36 @@ const RecuritList = () => {
       <h2>🗓️ 일정</h2>
 
       {isManager && (
-        <div className="schedule-form">
+        <div className="schedule-actions">
           <button
             className="create-button"
-            onClick={() => navigate(`/clubsadmin/${clubId}/recruitcreate`)}
-          >
-            일정 등록하기
-          </button>
+            onClick={() => navigate(`/clubsadmin/${clubId}/recruitcreate`, { state: { mode: 'recruit' } })}
+          >모집공고 등록하기</button>
+          <button
+            className="create-button"
+            onClick={() => navigate(`/clubsadmin/${clubId}/recruitcreate`, { state: { mode: 'schedule' } })}
+          >일정 등록하기</button>
         </div>
       )}
 
       <Calendar
         onChange={setSelectedDate}
         value={selectedDate}
-        tileContent={getTileContent}
-        onClickDay={(date) => {
+        tileContent={({ date }) => {
           const dateStr = date.toISOString().split('T')[0];
-          const matched = schedules.find((s) => s.date === dateStr);
-          if (matched) {
-            navigate(`/clubsadmin/${clubId}/recruit/${matched.id}`);
-          } else {
-            console.log('해당 날짜에는 일정 없음');
-          }
+          return schedules.some(s => s.date === dateStr) ? <div className="dot" /> : null;
         }}
+        onClickDay={handleTileClick}
       />
 
       <div className="schedule-list">
         <h3>📋 등록된 일정</h3>
-        {renderedSchedules.length === 0 ? (
+        {grouped.length === 0 ? (
           <p>등록된 일정이 없습니다.</p>
         ) : (
           <ul>
-            {renderedSchedules.map((r, i) => (
-              <li key={i}>
-                {r.start} ~ {r.end} - {r.title}
-              </li>
+            {grouped.map((r, i) => (
+              <li key={i}>{r.start} ~ {r.end} - {r.title}</li>
             ))}
           </ul>
         )}
