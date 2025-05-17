@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import Pagination from 'react-js-pagination';
 import axios from 'axios';
 import '../../styles/Main/Main.css';
 
-const Main = ({ selectedCategory }) => {
+const Main = () => {
   const [allClubs, setAllClubs] = useState([]);
   const [filteredClubs, setFilteredClubs] = useState([]);
   const [recruitments, setRecruitments] = useState([]);
   const [recruitmentStatus, setRecruitmentStatus] = useState('전체');
+  const [filterRecruits,setFilteredRecruits] = useState([]);
   const [clubType, setClubType] = useState('전체');
-  const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedClub, setSelectedClub] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -21,9 +21,11 @@ const Main = ({ selectedCategory }) => {
   const [isVerified, setIsVerified] = useState(false);
   const [showManagerAuthForm, setShowManagerAuthForm] = useState(false);
 
-  console.log(setRecruitmentStatus,setClubType,setSearchTerm)
+  console.log(setRecruitmentStatus,setClubType,filterRecruits)
 
   const navigate = useNavigate();
+
+  const {searchTerm, recruitStatus, selectedCategory} = useOutletContext();
   const clubsPerPage = 6;
 
   useEffect(() => {
@@ -43,16 +45,49 @@ const Main = ({ selectedCategory }) => {
     fetchClubs();
   }, []);
 
-  useEffect(() => {
-    const fetchRecruitments = async () => {
+
+useEffect(() => {
+  (async () => {
+    try {
       const token = localStorage.getItem('accessToken');
-      const res = await axios.get(`${import.meta.env.VITE_APP_URL}/api/recruitments`, {
-        headers: { Authorization: `Bearer Bearer ${token}` }
+      const res = await axios.get(
+        `${import.meta.env.VITE_APP_URL}/api/recruitments`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const data = res.data.data || [];
+      
+      // 오늘 날짜 (시간 제거)
+      const today = new Date().toISOString().split('T')[0];
+
+      // 상태별 필터링
+      const filtered = data.filter(r => {
+        const { alwaysOpen, startDate, endDate } = r;
+        switch (recruitStatus) {
+          case '전체':
+            return true;
+          case '상시모집':
+            return alwaysOpen === true;
+          case '모집중':
+            // 상시모집이거나, 기간 내
+            return alwaysOpen === true ||
+                   (startDate <= today && today <= endDate);
+          case '모집마감':
+            // 상시모집이 아니고, 기간 지난 경우
+            return alwaysOpen === false &&
+                   today > endDate;
+          default:
+            return true;
+        }
       });
-      setRecruitments(res.data?.data || []);
-    };
-    fetchRecruitments();
-  }, []);
+
+      setRecruitments(data);
+      setFilteredRecruits(filtered);
+    } catch (err) {
+      console.error('모집공고 조회 실패:', err);
+    }
+  })();
+}, [recruitStatus]);
+
 
   useEffect(() => {
     let filtered = allClubs;

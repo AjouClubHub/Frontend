@@ -22,6 +22,7 @@ const MainNavbar = ({
   // 검색어 입력 시 Layout에 전달
   const handleSearchInput = (e) => {
     const term = e.target.value;
+    console.log("Navbar 입력:",term);
     setSearchTerm(term);
     onSearchChange(term);
   };
@@ -49,12 +50,13 @@ const MainNavbar = ({
       {activeMenu === "status" && (
         <div className="status-menu">
           <button onClick={() => onRecruitmentChange("전체")}>전체</button>
-          <button onClick={() => onRecruitmentChange("모집중")}>
-            모집중
-          </button>
-          <button onClick={() => onRecruitmentChange("모집마감")}>
-            모집마감
-          </button>
+          <button onClick={() =>{
+            console.log('Navbar 모집중 클릭')
+             onRecruitmentChange("모집중")}
+          } 
+           >모집중</button>
+          <button onClick={() => onRecruitmentChange("모집마감")}>모집마감</button>
++         <button onClick={() => onRecruitmentChange("상시모집")}>상시모집</button>
         </div>
       )}
 
@@ -63,7 +65,6 @@ const MainNavbar = ({
       {activeMenu === "account" && (
         <div className="account-menu">
           <button onClick={() => navigate("/auth/login")}>로그인</button>
-          <button onClick={() => navigate("/auth/signup")}>회원가입</button>
           <button onClick={() => navigate("/auth/setting")}>계정조회</button>
           <button onClick={handleLogout}>로그아웃</button>
         </div>
