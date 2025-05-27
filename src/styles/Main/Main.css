@@ -56,33 +56,30 @@ body, html {
   width: 100%;
 }
 
+/* 클럽 리스트: 그리드 3열 */
 .club-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 32px;
   padding: 10px;
-  max-width: 1024px; /* ✅ 전체 3개 카드 + gap 포함 */
+  max-width: 1124px; /* 320px*3 + gap*2 */
   margin: 0 auto;
   box-sizing: border-box;
+  align-items: start;
+  grid-auto-rows: minmax(360px,auto);
+  grid-auto-columns: minmax(0, 1fr);
 }
 
-/* ✅ 카드 3개 (320px씩) */
+/* 카드 스타일 */
 .club-item {
-  flex: 0 0 320px;
   background-color: #fff;
   padding: 24px;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  min-height: 260px;
   transition: transform 0.2s ease-in-out;
+  cursor: pointer;
+  min-height: 360px;
 }
-
-.club-item:hover {
-  transform: translateY(-6px);
-}
-
-
 
 .club-item:hover {
   transform: translateY(-6px);
@@ -97,6 +94,9 @@ body, html {
 .club-item p {
   font-size: 1rem;
   margin: 5px 0;
+  overflow-wrap: break-word;
+  /* 또는 더 과감하게 */
+  word-break: break-all;
 }
 
 /* 페이지네이션 */
@@ -113,27 +113,37 @@ body, html {
   padding: 0;
 }
 
-.page-link {
+/* 페이지네이션 버튼 */
+.page-link,
+.pagination li a {
   padding: 8px 14px;
   background-color: #fff;
   border: 1px solid #ddd;
   color: #333;
   text-decoration: none;
   border-radius: 5px;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
 }
 
-.page-link:hover {
+.page-link:hover,
+.pagination li a:hover {
   background-color: #007bff;
   color: #fff;
   border-color: #007bff;
 }
 
-.page-item.active .page-link {
+.page-item.active .page-link,
+.pagination li.active a {
   background-color: #007bff;
   color: #fff;
   border-color: #007bff;
+}
+
+.pagination li.disabled a {
+  color: #999;
+  cursor: default;
+  background-color: #f9f9f9;
+  border-color: #eee;
 }
 
 /* 모달 오버레이 */
@@ -143,7 +153,7 @@ body, html {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5); /* 반투명한 배경 */
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -151,23 +161,19 @@ body, html {
 }
 
 /* 모달 콘텐츠 */
-/* 모달 콘텐츠 */
 .modal-content {
   background-color: #fff;
-  padding: 40px; /* 여백 추가 */
+  padding: 40px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  max-width: 90%; /* 최대 너비 제한 */
-  width: 1000px; /* 모달 너비를 1000px로 설정 */
-  height: auto;
-  max-height: 90%; /* 최대 높이 */
-  overflow-y: auto; /* 내용이 많을 경우 스크롤 가능 */
+  max-width: 90%;
+  width: 1000px;
+  max-height: 90%;
+  overflow-y: auto;
   position: relative;
   z-index: 9999;
 }
 
-
-/* 모달 닫기 버튼 */
 .modal-close {
   position: absolute;
   top: 10px;
@@ -178,16 +184,14 @@ body, html {
   cursor: pointer;
 }
 
-/* 모달 내용 이미지 중앙 정렬 */
 .modal-content img {
   width: 100%;
   height: auto;
-  max-width: 500px; /* 이미지 최대 크기 제한 */
+  max-width: 500px;
   margin: 0 auto;
   display: block;
 }
 
-/* 버튼 스타일 */
 .modal-btn {
   padding: 10px 20px;
   margin-top: 15px;
@@ -208,7 +212,6 @@ body, html {
   background-color: #3578e5;
 }
 
-/* 적용 버튼 스타일 */
 .modal-btn.apply {
   background-color: #28a745;
 }
@@ -217,60 +220,70 @@ body, html {
   background-color: #218838;
 }
 
-
 .keyword-tag {
   display: inline-block;
-  background-color: #e0f0ff; /* 연한 파란색 배경 */
-  color: #007bff; /* 파란색 글자 */
+  background-color: #e0f0ff;
+  color: #007bff;
   padding: 6px 12px;
-  border-radius: 999px; /* 타원형 */
+  border-radius: 999px;
   font-size: 0.85rem;
   margin: 4px 4px 0 0;
-  white-space: nowrap; /* 줄바꿈 없이 */
+  white-space: nowrap;
 }
 
+.auth-form {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+}
 
+.auth-form input,
+.auth-form button {
+  flex: none;
+  padding: 8px 12px;
+  font-size: 1rem;
+  border-radius: 6px;
+  transition: background-color 0.2s, border-color 0.2s;
+}
 
+.auth-form button {
+  width: 120px;
+  cursor: pointer;
+}
 
-/* ✅ 반응형: 1024px 이하 → 2개 */
+.auth-form button:first-of-type {
+  background-color: #4e90fd;
+  color: #fff;
+}
+
+.auth-form button:first-of-type:hover {
+  background-color: #3578e5;
+}
+
+.auth-form button:last-of-type {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.auth-form button:last-of-type:hover {
+  background-color: #218838;
+}
+
+/* Responsive: 1024px 이하 -> 2열 그리드 */
 @media (max-width: 1024px) {
   .club-list {
-    max-width: 688px; /* 2개 * 320 + 32px gap */
-  }
-
-  .club-item {
-    flex: 0 0 320px;
-  }
-  .content {
-    flex-direction: column;
-    align-items: flex-start;
-    text-align: left;
-    padding: 16px;
-  }
-
-  .text-block {
-    margin-top: 16px;
-    width: 100%;
-  }
-
-  .text-block h1 {
-    font-size: 1.5rem;
-  }
-
-  .text-block p {
-    font-size: 0.95rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
   }
 }
 
-/* ✅ 반응형: 768px 이하 → 1개 */
+/* Responsive: 768px 이하 -> 1열 그리드 */
 @media (max-width: 768px) {
   .club-list {
-    max-width: 100%;
-    padding: 16px;
+    grid-template-columns: 1fr;
     gap: 16px;
-  }
-
-  .club-item {
-    flex: 0 0 100%;
+    padding: 16px;
   }
 }

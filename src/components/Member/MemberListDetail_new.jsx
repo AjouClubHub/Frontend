@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useParams ,useNavigate } from "react-router-dom";
 
 const MemberListDetail_new = () => {
   const { clubId, applicationId } = useParams();
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchApplication = async () => {
@@ -37,6 +38,7 @@ const MemberListDetail_new = () => {
 
   return (
     <div style={{ padding: "20px" }}>
+       <button onClick={() => navigate(-1)}><IoMdArrowRoundBack /></button>
       <h2>👤 신청자 상세 정보</h2>
       <ul style={{ lineHeight: "1.8" }}>
         <li><strong>지원 동아리:</strong> {application?.clubName} ({application?.clubType})</li>

@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate,useOutletContext } from "react-router-dom";
+import { useParams, useNavigate, useOutletContext } from "react-router-dom";
 import axios from "axios";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import "../../styles/Noti/NoticeList.css";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const NoticeList = () => {
   const { clubId } = useParams();
@@ -15,9 +18,6 @@ const NoticeList = () => {
   const [error, setError] = useState(null);
   const { isManager } = useOutletContext();
 
-  dayjs.extend(utc);
-  dayjs.extend(timezone);
-
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
 
@@ -25,11 +25,7 @@ const NoticeList = () => {
       try {
         const res = await axios.get(
           `${import.meta.env.VITE_APP_URL}/api/clubs/${clubId}/announcements`,
-          {
-            headers: {
-              Authorization: `Bearer Bearer ${token}`,
-            },
-          }
+          { headers: { Authorization: `Bearer Bearer ${token}` } }
         );
         setNotices(res.data?.data || []);
       } catch (err) {
@@ -44,7 +40,8 @@ const NoticeList = () => {
   }, [clubId]);
 
   const handleWrite = () => {
-    navigate(`/clubsadmin/${clubId}/noticecreate`);
+    const basePath = isManager ? "/clubsadmin" : "/myclubs";
+    navigate(`${basePath}/${clubId}/noticecreate`);
   };
 
   const filteredNotices = notices.filter((notice) =>
@@ -59,10 +56,11 @@ const NoticeList = () => {
     <div className="notice-list">
       <div className="notice-header">
         <h2>📢 공지사항 목록</h2>
-        {/* ✅ 글쓰기 버튼 항상 표시 */}
         {isManager && (
-  <button onClick={handleWrite} className="write-btn">✍️ 글쓰기</button>
-)}
+          <button onClick={handleWrite} className="write-btn">
+            ✍️ 글쓰기
+          </button>
+        )}
       </div>
 
       <div className="search-box">
@@ -79,23 +77,35 @@ const NoticeList = () => {
         <p>공지사항이 없습니다.</p>
       ) : (
         <ul>
-          {filteredNotices.map((notice) => (
-            <li
-              key={notice.id}
-              className="notice-item"
-              onClick={() => navigate(`/clubsadmin/${clubId}/notice/${notice.id}`)}
-              style={{ cursor: "pointer" }}
-            >
-              <h3>{notice.title}</h3>
-              <p>{notice.content.replace(/<[^>]+>/g, "").slice(0, 100)}...</p>
-              <div className="notice-category">{notice.category}</div>
-              <div className="notice-meta">
-                <span>{notice.authorName}</span>
-                <span>{dayjs.utc(notice.createdAt).tz("Asia/Seoul").format("YYYY.MM.DD HH:mm")}</span>
-              </div>
-              <div className="notice-views">조회수: {notice.views}</div>
-            </li>
-          ))}
+          {filteredNotices.map((notice) => {
+            const basePath = isManager ? "/clubsadmin" : "/myclubs";
+            return (
+              <li
+                key={notice.id}
+                className="notice-item"
+                onClick={() => navigate(`${basePath}/${clubId}/notice/${notice.id}`)}
+                style={{ cursor: "pointer" }}
+              >
+                <h3>{notice.title}</h3>
+                <p>
+                  {notice.content.replace(/<[^>]+>/g, "").slice(0, 100)}...
+                </p>
+                <div className="notice-category">{notice.category}</div>
+                <div className="notice-meta">
+                  <span>{notice.authorName}</span>
+                  <span>
+                    {dayjs
+                      .utc(notice.createdAt)
+                      .tz("Asia/Seoul")
+                      .format("YYYY.MM.DD HH:mm")}
+                  </span>
+                </div>
+                <div className="notice-views">
+                  조회수: {notice.views}
+                </div>
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>

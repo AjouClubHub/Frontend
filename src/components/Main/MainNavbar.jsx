@@ -1,76 +1,91 @@
-// src/components/Main/MainNavbar.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useRecoilValue } from 'recoil';
+import { notificationPopupState } from '../store/notificationPopupState';
 import "../../styles/Main/MainNavbar.css";
 
-const MainNavbar = ({
-  onSearchChange = () => {},
-  onRecruitmentChange = () => {},
-}) => {
+export default function MainNavbar({ onSearchChange, onRecruitmentChange }) {
   const navigate = useNavigate();
   const [activeMenu, setActiveMenu] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const token = localStorage.getItem("accessToken");
+  const { notification, isOpen } = useRecoilValue(notificationPopupState);
 
-  const toggleMenu = (menu) =>
+  const toggleMenu = menu =>
     setActiveMenu(activeMenu === menu ? null : menu);
 
-  const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    navigate("/auth/login");
+  const handleSearchInput = e => {
+    setSearchTerm(e.target.value);
+    onSearchChange(e.target.value);
   };
 
-  // 검색어 입력 시 Layout에 전달
-  const handleSearchInput = (e) => {
-    const term = e.target.value;
-    console.log("Navbar 입력:",term);
-    setSearchTerm(term);
-    onSearchChange(term);
-  };
+  if (!token) {
+    // 비로그인 시: 검색창만 보여주기
+    return (
+      <nav className="navbar">
+        <img
+          src="/logo.png"
+          alt="logo"
+          onClick={() => navigate("/main/home")}
+        />
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={handleSearchInput}
+          placeholder="🔍 동아리명 또는 키워드 검색"
+        />
+         <button onClick={() => navigate("/auth/login")}>로그인</button>  
+      </nav>
+      
+      
+      
+      
+    );
+  }
 
+  // 로그인 시: 기존 UI
   return (
-    <nav className="navbar">
-      {/* 로고 클릭 시 메인으로 */}
+    <nav className="navbar" style={{ position: 'relative' }}>
+      {isOpen && notification && (
+        <div className="nav-popup">{notification.content}</div>
+      )}
       <img
         src="/logo.png"
         alt="logo"
         onClick={() => navigate("/main/home")}
-        style={{ cursor: "pointer" }}
       />
-
-      {/* 검색창 */}
       <input
         type="text"
         value={searchTerm}
         onChange={handleSearchInput}
-        placeholder="🔍 동아리명 검색"
+        placeholder="🔍 동아리명 또는 키워드 검색"
       />
 
-      {/* 모집 상태 필터 */}
-      <button onClick={() => toggleMenu("status")}>모집 상태</button>
-      {activeMenu === "status" && (
-        <div className="status-menu">
-          <button onClick={() => onRecruitmentChange("전체")}>전체</button>
-          <button onClick={() =>{
-            console.log('Navbar 모집중 클릭')
-             onRecruitmentChange("모집중")}
-          } 
-           >모집중</button>
-          <button onClick={() => onRecruitmentChange("모집마감")}>모집마감</button>
-        <button onClick={() => onRecruitmentChange("상시모집")}>상시모집</button>
-        </div>
-      )}
+<div className="menu-wrapper">
+        <button onClick={() => toggleMenu("status")}>모집 상태</button>
+        {activeMenu === "status" && (
+          <div className="status-menu">
+            <button onClick={() => onRecruitmentChange("전체")}>전체</button>
+            <button onClick={() => onRecruitmentChange("모집중")}>모집중</button>
+            <button onClick={() => onRecruitmentChange("모집마감")}>모집마감</button>
+            <button onClick={() => onRecruitmentChange("상시모집")}>상시모집</button>
+          </div>
+        )}
+      </div>
 
-      {/* 계정 메뉴 */}
-      <button onClick={() => toggleMenu("account")}>계정</button>
-      {activeMenu === "account" && (
-        <div className="account-menu">
-          <button onClick={() => navigate("/auth/login")}>로그인</button>
-          <button onClick={() => navigate("/auth/setting")}>계정조회</button>
-          <button onClick={handleLogout}>로그아웃</button>
-        </div>
-      )}
+      {/* 계정 메뉴 래퍼 */}
+      <div className="menu-wrapper">
+        <button onClick={() => toggleMenu("account")}>계정</button>
+        {activeMenu === "account" && (
+          <div className="account-menu">
+            <button onClick={() => navigate("/auth/setting")}>계정조회</button>
+            <button onClick={() => {
+              localStorage.removeItem("accessToken");
+              navigate("/auth/login");
+            }}>로그아웃</button>
+          </div>
+        )}
+      </div>
     </nav>
   );
-};
-
-export default MainNavbar;
+}

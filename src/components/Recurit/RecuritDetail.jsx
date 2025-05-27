@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useOutletContext,useNavigate } from "react-router-dom";
 import axios from "axios";
+import { IoMdArrowRoundBack } from "react-icons/io";
 
 const RecuritDetail = () => {
   const { clubId, scheduleId } = useParams();
@@ -44,7 +45,7 @@ const RecuritDetail = () => {
     try {
       const token = localStorage.getItem("accessToken");
       await axios.delete(
-        `${import.meta.env.VITE_APP_URL}/api/clubs/${clubId}/recurit/${scheduleId}`,
+        `${import.meta.env.VITE_APP_URL}/api/clubs/${clubId}/schedules/${scheduleId}`,
         {
           headers: {
             Authorization: `Bearer Bearer ${token}`,
@@ -65,11 +66,13 @@ const RecuritDetail = () => {
 
   return (
     <div className="recruit-detail">
-      <h2>📄 일정 상세</h2>
-      <p><strong>제목:</strong> {schedule.title}</p>
+      <h2>📄 <strong>제목:</strong> {schedule.title}</h2>
+      <button onClick={() => navigate(-1)}><IoMdArrowRoundBack /></button>
       <p><strong>내용:</strong> {schedule.content}</p>
       <p><strong>시작 시간:</strong> {new Date(schedule.startTime).toLocaleString()}</p>
       <p><strong>종료 시간:</strong> {new Date(schedule.endTime).toLocaleString()}</p>
+
+    
 
       {/* 관리자인 경우 수정 및 삭제 버튼을 표시 */}
       {isManager && (

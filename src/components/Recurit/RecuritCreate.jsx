@@ -10,8 +10,14 @@ const RecuritCreate = () => {
   const mode = state?.mode || 'recruit';
 
   const initialForm = {
-    title: '', requirements: '', alwaysOpen: false, startDate: '', endDate: '',
-    content: '', startTime: '', endTime: ''
+    title: '',
+    requirements: '',
+    alwaysOpen: false,
+    startDate: '',
+    endDate: '',
+    content: '',
+    startTime: '',
+    endTime: ''
   };
   const [form, setForm] = useState(initialForm);
   const [error, setError] = useState(null);
@@ -28,19 +34,33 @@ const RecuritCreate = () => {
       if (mode === 'recruit') {
         await axios.post(
           `${import.meta.env.VITE_APP_URL}/api/clubs/${clubId}/recruitments`,
-          { title: form.title, requirements: form.requirements, alwaysOpen: form.alwaysOpen, startDate: form.startDate, endDate: form.endDate },
-          { headers: { Authorization: `Bearer Bearer${token}` } }
+          {
+            title: form.title,
+            requirements: form.requirements,
+            alwaysOpen: form.alwaysOpen,
+            startDate: form.startDate,
+            endDate: form.endDate
+          },
+          { headers: { Authorization: `Bearer Bearer ${token}` } }
         );
         alert('모집공고가 등록되었습니다');
+        // 등록 후 리스트 화면으로 이동
+        navigate(`/clubsadmin/${clubId}/recruitments`);
       } else {
         await axios.post(
           `${import.meta.env.VITE_APP_URL}/api/clubs/${clubId}/schedules`,
-          { title: form.title, content: form.content, startTime: form.startTime, endTime: form.endTime },
+          {
+            title: form.title,
+            content: form.content,
+            startTime: form.startTime,
+            endTime: form.endTime
+          },
           { headers: { Authorization: `Bearer Bearer ${token}` } }
         );
         alert('일정이 등록되었습니다');
+        // 등록 후 일정 리스트로 이동
+        navigate(`/clubsadmin/${clubId}/recruit`);
       }
-      navigate(`/clubsadmin/${clubId}/recurit`);
     } catch (err) {
       console.error('등록 실패:', err);
       setError('등록 중 오류가 발생했습니다');
@@ -57,7 +77,10 @@ const RecuritCreate = () => {
         </label>
         {mode === 'recruit' ? (
           <>
-            <label>요구사항<input type="text" name="requirements" value={form.requirements} onChange={handleChange} /></label>
+            <label>
+              요구사항
+              <input type="text" name="requirements" value={form.requirements} onChange={handleChange} />
+            </label>
             <fieldset className="always-open-fieldset">
               <legend>상시모집 여부</legend>
               <label>
@@ -79,14 +102,29 @@ const RecuritCreate = () => {
                 /> 아니오
               </label>
             </fieldset>
-            <label>시작일<input type="date" name="startDate" value={form.startDate} onChange={handleChange} required /></label>
-            <label>종료일<input type="date" name="endDate" value={form.endDate} onChange={handleChange} required /></label>
+            <label>
+              시작일
+              <input type="date" name="startDate" value={form.startDate} onChange={handleChange} required />
+            </label>
+            <label>
+              종료일
+              <input type="date" name="endDate" value={form.endDate} onChange={handleChange} required />
+            </label>
           </>
         ) : (
           <>
-            <label>내용<textarea name="content" value={form.content} onChange={handleChange} required /></label>
-            <label>시작시간<input type="datetime-local" name="startTime" value={form.startTime} onChange={handleChange} required /></label>
-            <label>종료시간<input type="datetime-local" name="endTime" value={form.endTime} onChange={handleChange} required /></label>
+            <label>
+              내용
+              <textarea name="content" value={form.content} onChange={handleChange} required />
+            </label>
+            <label>
+              시작시간
+              <input type="datetime-local" name="startTime" value={form.startTime} onChange={handleChange} required />
+            </label>
+            <label>
+              종료시간
+              <input type="datetime-local" name="endTime" value={form.endTime} onChange={handleChange} required />
+            </label>
           </>
         )}
         {error && <p className="error-text">{error}</p>}

@@ -1,77 +1,87 @@
-/* 클럽 카드 스타일 */
-.club-card {
-  position: relative;
-  background-color: #f9f9f9;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-  padding: 15px;
+.myclubs-container {
+  max-width: 1200px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  position: relative;
-}
-
-/* 상태 배너를 카드 상단에 고정 */
-.status-banner {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  padding: 10px 0;
-
-  text-align: center;
-  font-weight: bold;
-  color: white;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-  font-size: 1rem;
-  box-sizing: border-box;
-}
-.club-card h3 {
-  margin-top: 50px;
-}
-
-/* 상태별 배경색 */
-.status-pending {
-  background-color: #8988f1; /* 신청 대기 중 */
-}
-
-.status-approved {
-  background-color: #98fb98; /* 승인 완료 */
-}
-
-.status-rejected {
-  display: flex; /* 버튼을 가로로 배치 */
-  background-color: #d9534f; /* 신청 거절 */
-  justify-content: center;
   align-items: center;
-  padding: 10px;
-  border-radius: 8px;
-  box-sizing: border-box;
-  text-align: center; /* 텍스트가 가운데 오도록 설정 */
-}
-.status-rejected h3 {
-  margin: 0; /* h3에 기본 margin 제거 */
-  font-size: 16px; /* 글씨 크기 조정 */
+  padding: 20px;
 }
 
-/* 버튼 스타일 */
-.view-rejection-btn {
-  padding: 10px 20px;
-  background-color: white;
-  color: white;
+/* Tabs */
+.myclubs-container .tabs {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+  align-items: flex-start;
+}
+
+.myclubs-container .tab {
+  padding: 8px 16px;
   border: none;
+  background: #f5f8fa;
+  border-radius: 4px;
   cursor: pointer;
-  margin-left: 10px; /* 버튼과 텍스트 간 간격 */
-
+  font-weight: 500;
+  color: #333;
+  padding:10px 20px;
+  font-size: 1.25rem;
 }
 
-.view-rejection-btn:hover {
-  background-color: #e68900;
+.myclubs-container .tab.active {
+  background: #007bff;
+  color: #fff;
 }
 
-.club-image {
+/* Divider */
+.myclubs-container .divider {
+  width: 100%;
+  height: 1px;
+  background-color: #e0e0e0;
+  border: none;
+  margin: 16px 0;
+}
+
+/* Club List Grid */
+.myclubs-container .myclubs-club-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: auto;
+  gap: 32px;
+  padding: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Club Cards */
+.myclubs-container .myclubs-club-card {
+  position: relative;
+  background-color: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  min-height: 260px;
+  transition: transform 0.2s ease-in-out;
+  cursor: pointer;
+  min-height: 360px;
+}
+
+.myclubs-container .myclubs-club-card:hover {
+  transform: translateY(-6px);
+}
+
+.myclubs-container .myclubs-club-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.myclubs-container .myclubs-club-card p {
+  font-size: 0.9rem;
+  margin: 6px 0;
+  color: #666;
+}
+
+.myclubs-container .myclubs-club-image {
   width: 100%;
   height: 120px;
   object-fit: cover;
@@ -79,103 +89,152 @@
   margin-bottom: 10px;
 }
 
-/* 신청 상태 표시 텍스트 */
-.status-text {
-  font-size: 0.9rem;
-  font-weight: normal;
-  color: #333;
-}
-
-/* 신청 상태 배너가 표시될 때 위치 */
-.club-card .status-banner {
-  top: -10px; /* 배너를 카드 위로 살짝 밀어내기 */
-}
-
-/* 클럽 카드 내용 스타일 */
-.club-card .club-info {
-  margin-top: 40px; /* 배너를 제외한 나머지 내용은 아래로 배치 */
-}
-
-.club-info h3 {
-  font-size: 18px;
-  margin-bottom: 10px;
-}
-
-.club-info p {
-  font-size: 14px;
-  color: #666;
-}
-
-.withdraw-button {
-  padding: 10px 20px;
-  border: none;
-  background-color: red;
-  color: white;
-  cursor: pointer;
+/* Buttons inside cards */
+.myclubs-container .myclubs-withdraw-button,
+.myclubs-container .myclubs-cancel-application-btn,
+.myclubs-container .myclubs-rejection-button {
   margin-top: 10px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
 }
 
-.withdraw-button:hover {
+.myclubs-container .myclubs-withdraw-button {
+  background-color: #d9534f;
+  color: #fff;
+}
+
+.myclubs-container .myclubs-withdraw-button:hover {
   background-color: darkred;
 }
 
-.rejection-info {
-  display:flex;
-  align-items: center;
-  gap: 10px;
+.myclubs-container .myclubs-cancel-application-btn {
+  background-color: #f0ad4e;
+  color: #fff;
+  margin-left: 10px;
 }
 
-/* 사유 조회하기 버튼 아래로 배치 */
-.rejection-button {
-  margin-left: 5px;
-  padding: 10px 20px;
-  background-color: white;
-  color: black;
+.myclubs-container .myclubs-cancel-application-btn:hover {
+  background-color: #ec971f;
+}
+
+.myclubs-container .myclubs-rejection-button {
+  background-color: #fff;
+  color: #d9534f;
+  margin-left: 10px;
+}
+
+.myclubs-container .myclubs-rejection-button:hover {
+  background-color: #f2dede;
+}
+
+/* Status Banner */
+.myclubs-container .status-banner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 10px 0;
+  text-align: center;
+  font-weight: bold;
+  color: #fff;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  box-sizing: border-box;
+}
+
+.myclubs-container .status-pending .status-banner {
+  background-color: #8988f1;
+}
+
+.myclubs-container .status-approved .status-banner {
+  background-color: #5cb85c;
+}
+
+.myclubs-container .status-rejected .status-banner {
+  background-color: #d9534f;
+}
+
+.myclubs-container .status-withdrawn .status-banner {
+  background-color: #777;
+}
+
+/* Modals */
+.myclubs-container .myclubs-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.myclubs-container .myclubs-modal-content {
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  max-width: 90%;
+  width: 600px;
+  max-height: 90%;
+  overflow-y: auto;
+  position: relative;
+}
+
+.myclubs-container .myclubs-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
   border: none;
+  font-size: 24px;
   cursor: pointer;
 }
 
-.rejection-button:hover {
-  background-color: white;
+.myclubs-container .myclubs-withdraw-btn,
+.myclubs-container .myclubs-cancel-btn {
+  padding: 10px 20px;
+  margin: 10px 5px 0 0;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
-/* 반응형: 모바일 기준 조정 */
-@media screen and (max-width: 768px) {
-  .myclubs-container {
-    padding: 20px;
-  }
+.myclubs-container .myclubs-withdraw-btn {
+  background-color: #d9534f;
+  color: #fff;
+}
 
-  .club-type-toggle button {
-    font-size: 13px;
-    padding: 6px 12px;
-  }
+.myclubs-container .myclubs-withdraw-btn:hover {
+  background-color: darkred;
+}
 
-  .club-image {
-    height: 100px;
-  }
+.myclubs-container .myclubs-cancel-btn {
+  background-color: #ccc;
+  color: #333;
+}
 
-  .club-card {
-    font-size: 14px;
+.myclubs-container .myclubs-cancel-btn:hover {
+  background-color: #999;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .myclubs-container .myclubs-club-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
   }
 }
 
-@media screen and (max-width: 480px) {
-  .club-type-toggle {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .club-type-toggle button {
-    flex: 1 1 auto;
-    min-width: 100px;
-  }
-
-  .club-card {
-    font-size: 13px;
-  }
-
-  .club-image {
-    height: 90px;
+@media (max-width: 768px) {
+  .myclubs-container .myclubs-club-list {
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
 }

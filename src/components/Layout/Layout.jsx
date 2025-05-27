@@ -1,59 +1,43 @@
-// src/components/Layout.jsx
+// src/components/Layout/Layout.jsx
 import React, { useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import MainNavbar from "../Main/MainNavbar";
 import SimpleNavbar from "../Main/SimpleNavbar";
 import Sidebar from "../Main/Sidebar";
+import '../../styles/Layout/Layout.css';
 
 const Layout = () => {
-  const location = useLocation();
-  const path = location.pathname;
-
+  const { pathname } = useLocation();
+  const isAuth = pathname.startsWith("/auth");
+  const isMain = pathname.startsWith("/main");
+  const token = localStorage.getItem("accessToken");
 
   const [searchTerm, setSearchTerm] = useState("");
   const [recruitStatus, setRecruitStatus] = useState("전체");
-  const [selectedCategory, setSelectedCategory] = useState([]);
-
-  // MainNavbar 에 넘길 콜백
-  const handleSearchChange = (term) => {
-    setSearchTerm(term);
-  };
-  const handleRecruitmentChange = (status) => {
-    setRecruitStatus(status);
-  };
-  const handleCategoryChange = (categories) => {
-    setSelectedCategory(categories);
-  };
-
-  const isAuthPage = path.startsWith("/auth");
-  const isMainPage = path.startsWith("/main");
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   return (
     <>
-      {!isAuthPage && (
-        <>
-          {isMainPage
-            ? (
-              <MainNavbar
-                onSearchChange={handleSearchChange}
-                onRecruitmentChange={handleRecruitmentChange}
-              />
-            )
-            : <SimpleNavbar />
-          }
-        </>
+      {!isAuth && (
+        isMain
+          ? <MainNavbar
+              onSearchChange={setSearchTerm}
+              onRecruitmentChange={setRecruitStatus}
+            />
+          : <SimpleNavbar />
       )}
-      <div className={!isAuthPage ? "layout-wrapper" : ""}>
-        {isMainPage && (
-          <Sidebar onCategoryClick={handleCategoryChange} />
+
+      <div className={!isAuth ? "layout-wrapper" : ""}>
+        {/* 로그인한 사용자일 때만 사이드바 표시 */}
+        {isMain && token && (
+          <Sidebar 
+          selectedCategory={selectedCategory}
+          onCategoryClick={setSelectedCategory} />
         )}
         <div className="page-content">
-       
-          <Outlet context={{
-            searchTerm,
-            recruitStatus,
-            selectedCategory
-          }} />
+          <Outlet
+            context={{ searchTerm, recruitStatus, selectedCategory }}
+          />
         </div>
       </div>
     </>

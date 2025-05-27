@@ -1,275 +1,338 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useNavigate, useOutletContext, useLocation } from 'react-router-dom';
 import Pagination from 'react-js-pagination';
 import axios from 'axios';
 import '../../styles/Main/Main.css';
+import InputMask from 'react-input-mask'
 
-const Main = () => {
+export default function Main() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { searchTerm, recruitStatus, selectedCategory } = useOutletContext();
+
   const [allClubs, setAllClubs] = useState([]);
-  const [filteredClubs, setFilteredClubs] = useState([]);
   const [recruitments, setRecruitments] = useState([]);
-  const [recruitmentStatus, setRecruitmentStatus] = useState('전체');
-  const [filterRecruits,setFilteredRecruits] = useState([]);
-  const [clubType, setClubType] = useState('전체');
+  const [filteredClubs, setFilteredClubs] = useState([]);
+  const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const clubsPerPage = 6;
+  const [isLoading, setIsLoading] = useState(true);
+
   const [selectedClub, setSelectedClub] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showContactInfo, setShowContactInfo] = useState(false);
+
   const [phoneNumber, setPhoneNumber] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
   const [managerAuthSent, setManagerAuthSent] = useState(false);
+
+  // isVerified 는 localStorage 기반
   const [isVerified, setIsVerified] = useState(false);
   const [showManagerAuthForm, setShowManagerAuthForm] = useState(false);
 
-  console.log(setRecruitmentStatus,setClubType,filterRecruits)
-
-  const navigate = useNavigate();
-
-  const {searchTerm, recruitStatus, selectedCategory} = useOutletContext();
-  const clubsPerPage = 6;
-
+  // 로고 클릭 시 첫 페이지로
   useEffect(() => {
-    const fetchClubs = async () => {
-      const token = localStorage.getItem('accessToken');
-      const res = await axios.get(`${import.meta.env.VITE_APP_URL}/api/clubs`, {
-        headers: { Authorization: `Bearer Bearer ${token}` }
-      });
-      const clubs = Array.isArray(res.data?.data)
-        ? res.data.data
-        : Array.isArray(res.data?.data?.clubs)
-        ? res.data.data.clubs
-        : [];
-      setAllClubs(clubs);
-      setFilteredClubs(clubs);
-    };
-    fetchClubs();
-  }, []);
+    if (location.state?.resetPage) {
+      setCurrentPage(1);
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state, navigate, location.pathname]);
 
+  // 검색어나 카테고리 변경 시 페이지 리셋
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedCategory]);
 
-useEffect(() => {
-  (async () => {
-    try {
+  // 데이터 페치
+  useEffect(() => {
+    setIsLoading(true);
+    const fetchData = async () => {
       const token = localStorage.getItem('accessToken');
-      const res = await axios.get(
-        `${import.meta.env.VITE_APP_URL}/api/recruitments`,
+      const catParam = Array.isArray(selectedCategory)
+        ? selectedCategory.join(',')
+        : selectedCategory || '';
+
+      let clubsData = [], clubsTotal = 0;
+      if (!searchTerm && !catParam) {
+        const res = await axios.get(
+          `${import.meta.env.VITE_APP_URL}/api/clubs`,
+          { headers: { Authorization: `Bearer Bearer ${token}` } }
+        );
+        const data = res.data?.data || res.data || [];
+        clubsData = Array.isArray(data) ? data : [];
+        clubsTotal = clubsData.length;
+      } else {
+        const res = await axios.get(
+          `${import.meta.env.VITE_APP_URL}/api/clubs/search`,
+          {
+            headers: { Authorization: `Bearer Bearer ${token}` },
+            params: {
+              query:     searchTerm     || undefined,
+              page:     currentPage - 1,
+              size:     clubsPerPage
+            }
+          }
+        );
+        const raw = res.data?.data;
+        if (Array.isArray(raw)) {
+          clubsData = raw;
+          clubsTotal = raw.length;
+        } else {
+          clubsData = Array.isArray(raw?.content) ? raw.content : [];
+          clubsTotal =
+            typeof raw?.totalElements === 'number'
+              ? raw.totalElements
+              : clubsData.length;
+        }
+      }
+      setAllClubs(clubsData);
+      setTotalCount(clubsTotal);
+
+      let recEndpoint = '/api/recruitments';
+      if (recruitStatus === '모집중')       recEndpoint = '/api/recruitments/open';
+      else if (recruitStatus === '모집마감') recEndpoint = '/api/recruitments/closed';
+
+      const recRes = await axios.get(
+        `${import.meta.env.VITE_APP_URL}${recEndpoint}`,
         { headers: { Authorization: `Bearer Bearer ${token}` } }
       );
-      const data = res.data.data || [];
-      
-      // 오늘 날짜 (시간 제거)
-      const today = new Date().toISOString().split('T')[0];
+      const recRaw = recRes.data?.data || recRes.data || [];
+      setRecruitments(Array.isArray(recRaw) ? recRaw : []);
+    };
 
-      // 상태별 필터링
-      const filtered = data.filter(r => {
-        const { alwaysOpen, startDate, endDate } = r;
-        switch (recruitStatus) {
-          case '전체':
-            return true;
-          case '상시모집':
-            return alwaysOpen === true;
-          case '모집중':
-            // 상시모집이거나, 기간 내
-            return alwaysOpen === true ||
-                   (startDate <= today && today <= endDate);
-          case '모집마감':
-            // 상시모집이 아니고, 기간 지난 경우
-            return alwaysOpen === false &&
-                   today > endDate;
-          default:
-            return true;
-        }
-      });
+    fetchData()
+      .catch(err => {
+        console.error('데이터 로딩 실패:', err);
+        setAllClubs([]);
+        setRecruitments([]);
+        setFilteredClubs([]);
+        setTotalCount(0);
+      })
+      .finally(() => setIsLoading(false));
+  }, [searchTerm, selectedCategory, recruitStatus, currentPage]);
 
-      setRecruitments(data);
-      setFilteredRecruits(filtered);
-    } catch (err) {
-      console.error('모집공고 조회 실패:', err);
-    }
-  })();
-}, [recruitStatus]);
-
-
+  // 필터링
   useEffect(() => {
-    let filtered = allClubs;
-    if (searchTerm) filtered = filtered.filter(club => club.name.toLowerCase().includes(searchTerm.toLowerCase()));
-    if (selectedCategory.length > 0) filtered = filtered.filter(club => selectedCategory.includes(club.category));
-    if (recruitmentStatus !== '전체') filtered = filtered.filter(club => club.status === recruitmentStatus);
-    if (clubType !== '전체') filtered = filtered.filter(club => club.type === clubType);
-    setFilteredClubs(filtered);
-  }, [searchTerm, selectedCategory, recruitmentStatus, clubType, allClubs]);
+    if (recruitStatus === '전체') {
+      setFilteredClubs(allClubs);
+    } else {
+      const allowed = new Set(recruitments.map(r => r.clubId ?? r.id));
+      setFilteredClubs(allClubs.filter(c => allowed.has(c.id)));
+    }
+  }, [allClubs, recruitments, recruitStatus]);
 
-  const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
-  const currentClubs = filteredClubs.slice((currentPage - 1) * clubsPerPage, currentPage * clubsPerPage);
+  // 페이지네이션
+  const indexLast  = currentPage * clubsPerPage;
+  const indexFirst = indexLast - clubsPerPage;
+  const currentClubs = filteredClubs.slice(indexFirst, indexLast);
+  const handlePageChange = page => setCurrentPage(page);
 
-  const openModal = (club) => {
+  // 모달 & 인증 로직
+  const openModal = club => {
     setSelectedClub(club);
     setIsModalOpen(true);
     setShowContactInfo(false);
     setPhoneNumber('');
     setVerificationCode('');
-    setIsVerified(false);
     setManagerAuthSent(false);
+    // localStorage 에 저장된 인증 여부 읽어오기
+    const saved = localStorage.getItem(`club-${club.id}-verified`);
+    setIsVerified(saved === 'true');
     setShowManagerAuthForm(false);
   };
-
-  const closeModal = () => {
-    setSelectedClub(null);
-    setIsModalOpen(false);
-    setShowContactInfo(false);
-  };
-
-  const handleApplyClick = () => {
-    if (selectedClub) {
-      closeModal();
-      navigate(`/main/${selectedClub.id}/application`);
-    }
-  };
+  const closeModal = () => setIsModalOpen(false);
 
   const handleContactClick = () => setShowContactInfo(true);
+  const handleApplyClick = () => {
+    closeModal();
+    navigate(`/main/${selectedClub.id}/application`);
+  };
 
   const handleManagerAuthRequest = async () => {
-    if (!phoneNumber) return alert("전화번호를 입력해주세요.");
-    const token = localStorage.getItem("accessToken");
-    const cleanedPhone = phoneNumber.trim();
-    try {
-      await axios.post(`${import.meta.env.VITE_APP_URL}/api/clubs/${selectedClub.id}/manager-auth/request`, { phoneNumber: cleanedPhone }, { headers: { Authorization: `Bearer ${token}` } });
-      alert("인증 코드가 발송되었습니다.");
-      setManagerAuthSent(true);
-    } catch (err) {
-      alert("전화번호가 일치하지 않거나 인증 요청에 실패했습니다.", err);
-    }
+    if (!phoneNumber) return alert('전화번호를 입력해주세요.');
+    const token = localStorage.getItem('accessToken');
+    await axios.post(
+      `${import.meta.env.VITE_APP_URL}/api/clubs/${selectedClub.id}/manager-auth/request`,
+      { phoneNumber },
+      { headers: { Authorization: `Bearer Bearer ${token}` } }
+    );
+    setManagerAuthSent(true);
+    alert('인증 코드가 발송되었습니다.');
   };
 
   const handleManagerAuthVerify = async () => {
-    if (!phoneNumber || !verificationCode) return alert("전화번호와 인증코드를 모두 입력해주세요.");
-    const token = localStorage.getItem("accessToken");
-    const cleanedPhone = phoneNumber.trim();
-    try {
-      await axios.patch(`${import.meta.env.VITE_APP_URL}/api/clubs/${selectedClub.id}/manager-auth/verify`, { phoneNumber: cleanedPhone, code: verificationCode }, { headers: { Authorization: `Bearer ${token}` } });
-      alert("✅ 임원진 인증이 완료되었습니다.");
-      setIsVerified(true);
-    } catch {
-      alert("인증 실패. 다시 시도해주세요.");
-    }
+    if (!verificationCode) return alert('인증 코드를 입력하세요.');
+    const token = localStorage.getItem('accessToken');
+    await axios.patch(
+      `${import.meta.env.VITE_APP_URL}/api/clubs/${selectedClub.id}/manager-auth/verify`,
+      { phoneNumber, code: verificationCode },
+      { headers: { Authorization: `Bearer Bearer ${token}` } }
+    );
+    setIsVerified(true);
+    // localStorage 에도 저장
+    localStorage.setItem(`club-${selectedClub.id}-verified`, 'true');
+    alert('임원진 인증 완료!');
   };
 
   return (
     <div className="main-container">
-       {/* 🔽 소개 영역 추가 */}
-    <div className="content">
-      <img
-        src="/logo.png"
-        alt="logo"
-        width="150px"
-        style={{ cursor: 'pointer', marginRight: '30px' }}
-      />
-      <div className="text-block">
-        <h1>아주대학교 - 동아리</h1>
-        <p>
-          <strong>'Clubing'</strong>에서 손쉽게 동아리를 찾고 가입하세요!<br />
-          카카오, 엑셀, 교내 시스템 등 번거로웠던 동아리 인원 관리를 간편하게 하세요!
-        </p>
-      </div>
-    </div>
-      <div className="content-wrapper">
-        <div className="club-section">
-          <div className="club-list">
-            {currentClubs.map((club) => {
-              const clubRecruitments = recruitments.filter(r => r.clubName === club.name);
-              return (
-                <div key={club.id} className="club-item" onClick={() => openModal(club)}>
-                  {club.imaUrl && <img src={club.imaUrl} alt={`${club.name} 로고`} style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '8px' }} />}
-                  <h2>{club.name}</h2>
-                  <p><strong>위치:</strong> {club.location}</p>
-                  <p><strong>소개:</strong> {club.description}</p>
-                  <div style={{ marginTop: '10px', marginBottom: '10px' }}>
-                    <strong>키워드: </strong>
-                    {club.keyword && club.keyword.split(' ').map((word, idx) => (
-                      <span key={idx} className="keyword-tag">{word}</span>
-                    ))}
-                  </div>
-                  {clubRecruitments.length > 0 && (
-                    <div className="recruitment-section">
-                      <strong>📢 모집 공고</strong>
-                      <ul>
-                        {clubRecruitments.map((r) => (
-                          <li key={r.id}>{r.title} <br />({r.startDate} ~ {r.endDate})</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="pagination-wrapper">
-            <Pagination
-              activePage={currentPage}
-              itemsCountPerPage={clubsPerPage}
-              totalItemsCount={filteredClubs.length}
-              pageRangeDisplayed={5}
-              onChange={handlePageChange}
-              prevPageText="<"
-              nextPageText=">"
-              firstPageText="<<"
-              lastPageText=">>"
-              itemClass="page-item"
-              linkClass="page-link"
-              innerClass="pagination"
-            />
-          </div>
+      {/* 헤더 */}
+      <div className="content">
+        <img
+          src="/logo.png"
+          alt="logo"
+          width={150}
+          style={{ cursor:'pointer', marginRight:30 }}
+          onClick={() => navigate('/main/home', { state: { resetPage: true } })}
+        />
+        <div className="text-block">
+          <h1>아주대학교 - 동아리</h1>
+          <p>
+            <strong>'Clubing'</strong>에서 손쉽게 동아리를 찾고 가입하세요!<br/>
+            번거로운 관리, 이젠 간편하게.
+          </p>
         </div>
       </div>
 
+      {/* 클럽 리스트 */}
+      <div className="club-list">
+        {isLoading
+          ? <p>로딩 중...</p>
+          : currentClubs.length === 0
+            ? <p>조건에 맞는 동아리가 없습니다.</p>
+            : currentClubs.map(club => (
+                <div
+                  key={club.id}
+                  className="club-item"
+                  onClick={() => openModal(club)}
+                >
+                  {club.imaUrl && (
+                    <img
+                      src={club.imaUrl}
+                      alt={`${club.name} 로고`}
+                      style={{ width:'100%', height:200, objectFit:'cover', borderRadius:8 }}
+                    />
+                  )}
+                  <h2>{club.name}</h2>
+                  <p><strong>위치:</strong> {club.location}</p>
+                  <p><strong>소개:</strong> {club.description}</p>
+                  <div style={{ margin:'10px 0' }}>
+                    <strong>키워드:</strong>{' '}
+                    {club.keyword?.split(' ').map((w,i)=>(
+                      <span key={i} className="keyword-tag">{w}</span>
+                    ))}
+                  </div>
+                </div>
+              ))
+        }
+      </div>
+
+      {/* 페이지네이션 */}
+      {totalCount > clubsPerPage && (
+        <div className="pagination-wrapper">
+          <Pagination
+            activePage={currentPage}
+            itemsCountPerPage={clubsPerPage}
+            totalItemsCount={totalCount}
+            pageRangeDisplayed={5}
+            onChange={handlePageChange}
+          />
+        </div>
+      )}
+
+      {/* 모달 */}
       {isModalOpen && selectedClub && (
         <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
             <button className="modal-close" onClick={closeModal}>×</button>
+
             {selectedClub.imaUrl && (
-  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-    <img src={selectedClub.imaUrl} alt={selectedClub.name} style={{ width: '300px', height: 'auto' }} />
-  </div>
-)}
+              <div style={{ textAlign:'center', marginBottom:20 }}>
+                <img
+                  src={selectedClub.imaUrl}
+                  alt={selectedClub.name}
+                  style={{ width:300, height:'auto' }}
+                />
+              </div>
+            )}
 
             <h2>{selectedClub.name}</h2>
             <p><strong>위치:</strong> {selectedClub.location}</p>
             <p><strong>소개:</strong> {selectedClub.description}</p>
             <p><strong>키워드:</strong> {selectedClub.keyword}</p>
+
             {selectedClub.snsUrl && (
-              <div>
-                <strong>SNS 주소:</strong>
+              <p>
+                <strong>SNS:</strong>{' '}
                 <a href={selectedClub.snsUrl} target="_blank" rel="noopener noreferrer">
                   {selectedClub.snsUrl}
                 </a>
-              </div>
+              </p>
             )}
 
-            {isVerified && (
-              <button className="modal-btn" onClick={() => navigate(`/clubsadmin/${selectedClub.id}/recruitcreate`)}>모집공고 등록하기</button>
-            )}
-            <button className="modal-btn" onClick={handleContactClick}>문의하기</button>
-            <button className="modal-btn apply" onClick={handleApplyClick}>가입하기</button>
-            <button className="modal-btn" onClick={() => setShowManagerAuthForm(true)}>임원진 인증하기</button>
-            {showContactInfo && <p><strong>회장 연락처:</strong> {selectedClub.contactInfo}</p>}
-            {showManagerAuthForm && (
-              <div>
-                <input type="text" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} placeholder="전화번호 입력" disabled={managerAuthSent} />
-                {!managerAuthSent ? (
-                  <button onClick={handleManagerAuthRequest}>인증코드 발송</button>
-                ) : (
-                  <>
-                    <input type="text" value={verificationCode} onChange={(e) => setVerificationCode(e.target.value)} placeholder="인증코드 입력" />
-                    <button onClick={handleManagerAuthVerify}>인증코드 확인</button>
-                  </>
+            {/* 인증 상태에 따라 다른 버튼 렌더링 */}
+            {isVerified ? (
+              <button
+                className="modal-btn"
+                onClick={() => navigate(`/clubsadmin/${selectedClub.id}/recruitcreate`)}
+              >
+                모집공고 등록하기
+              </button>
+            ) : (
+              <>
+                <button
+                  className="modal-btn"
+                  onClick={() => setShowManagerAuthForm(true)}
+                >
+                  임원진 인증하기
+                </button>
+
+                {showManagerAuthForm && (
+                  <div className="auth-form">
+                     <InputMask
+      mask="999-9999-9999"
+      value={phoneNumber}
+      onChange={e => setPhoneNumber(e.target.value)}
+      disabled={managerAuthSent}
+      placeholder="전화번호(-형식)" 
+    >
+      {(inputProps) => (
+        <input
+          {...inputProps}
+          type="text"
+          className="your-input-class" /* 기존 스타일 그대로 적용 */
+        />
+      )}
+    </InputMask>
+                    {!managerAuthSent ? (
+                      <button onClick={handleManagerAuthRequest}>코드 발송</button>
+                    ) : (
+                      <>
+                        <input
+                          type="text"
+                          value={verificationCode}
+                          onChange={e => setVerificationCode(e.target.value)}
+                          placeholder="인증 코드"
+                        />
+                        <button onClick={handleManagerAuthVerify}>코드 확인</button>
+                      </>
+                    )}
+                  </div>
                 )}
-              </div>
+              </>
             )}
+
+            {/* 문의 / 가입 버튼 (항상 노출) */}
+            <button className="modal-btn" onClick={handleContactClick}>문의하기</button>
+            {showContactInfo && (
+              <p><strong>연락처:</strong> {selectedClub.contactInfo}</p>
+            )}
+            <button className="modal-btn apply" onClick={handleApplyClick}>가입하기</button>
+
+           
           </div>
         </div>
       )}
     </div>
   );
-};
-
-export default Main;
+}

@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams,useNavigate } from "react-router-dom";
 import axios from "axios";
+import { IoMdArrowRoundBack } from "react-icons/io";
 
 const MemberDetail = () => {
   const { clubId, memberId } = useParams();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMember = async () => {
@@ -37,6 +39,7 @@ const MemberDetail = () => {
 
   return (
     <div style={{ padding: "20px", lineHeight: "1.8" }}>
+      <button onClick={() => navigate(-1)}><IoMdArrowRoundBack /></button>
       <h2>👤 멤버 상세 정보</h2>
       <ul>
         <li><strong>이름:</strong> {member.name}</li>

@@ -9,7 +9,8 @@ const Setting = () => {
   const [member, setMember] = useState(null);
   const [joinedClubs, setJoinedClubs] = useState([]);
   const [applicationStatus, setApplicationStatus] = useState([]);
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState([]); // Unread notifications
+  const [previousNotifications, setPreviousNotifications] = useState([]); // Read notifications
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState('profile');
 
@@ -30,7 +31,10 @@ const Setting = () => {
         `${apiUrl}/api/notifications`,
         { headers: { Authorization: `Bearer Bearer ${token}` } }
       );
-      setNotifications(notificationsResponse.data.data || []);
+      const allNotes = notificationsResponse.data.data || [];
+      // Separate unread and read
+      setNotifications(allNotes.filter(n => !n.isRead));
+      setPreviousNotifications(allNotes.filter(n => n.isRead));
     } catch (error) {
       console.error('회원 정보를 불러오는 데 실패했습니다:', error);
     } finally {
@@ -45,9 +49,18 @@ const Setting = () => {
         {},
         { headers: { Authorization: `Bearer Bearer ${token}` } }
       );
-      setNotifications(notifications.map(n =>
-        n.id === notificationId ? { ...n, read: true } : n
-      ));
+      // Move to previousNotifications
+      setNotifications(prev => {
+        const remaining = prev.filter(n => n.id !== notificationId);
+        const marked = prev.find(n => n.id === notificationId);
+        if (marked) {
+          setPreviousNotifications(prevPrev => [
+            { ...marked, isRead: true },
+            ...prevPrev
+          ]);
+        }
+        return remaining;
+      });
     } catch (error) {
       console.error('알림 읽음 처리에 실패했습니다:', error);
     }
@@ -94,43 +107,73 @@ const Setting = () => {
           <section className="joined-clubs">
             <h3>가입한 클럽</h3>
             {joinedClubs.length > 0 ? (
-              <ul>{joinedClubs.map(club => (
-                <li key={club.id}>
-                  <p>{club.name}</p>
-                  <p>{club.status}</p>
-                </li>
-              ))}</ul>
-            ) : <p>가입한 클럽이 없습니다.</p>}
+              <ul>
+                {joinedClubs.map(club => (
+                  <li key={club.id}>
+                    <p>{club.name}</p>
+                    <p>{club.status}</p>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>가입한 클럽이 없습니다.</p>
+            )}
           </section>
 
           <section className="application-status">
             <h3>가입 신청 현황</h3>
             {applicationStatus.length > 0 ? (
-              <ul>{applicationStatus.map(app => (
-                <li key={app.id}>
-                  <p>{app.clubName}</p>
-                  <p>{app.status}</p>
-                </li>
-              ))}</ul>
-            ) : <p>가입 신청이 없습니다.</p>}
+              <ul>
+                {applicationStatus.map(app => (
+                  <li key={app.id}>
+                    <p>{app.clubName}</p>
+                    <p>{app.status}</p>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>가입 신청이 없습니다.</p>
+            )}
           </section>
         </>
       )}
 
       {view === 'notifications' && (
         <section className="notifications">
-          <h3>알림</h3>
+          <h3>새 알림</h3>
           {notifications.length > 0 ? (
-            <ul>{notifications.map(notification => (
-              <li
-                key={notification.id}
-                onClick={() => markAsRead(notification.id)}
-                className={notification.read ? 'read' : 'unread'}
-              >{notification.message}</li>
-            ))}</ul>
-          ) : <p>알림이 없습니다.</p>}
+            <ul>
+              {notifications.map(notification => (
+                <li
+                  key={notification.id}
+                  onClick={() => markAsRead(notification.id)}
+                  className="unread"
+                >
+                  <p>{notification.content}</p>
+                  <small>{new Date(notification.createdAt).toLocaleString()}</small>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>새 알림이 없습니다.</p>
+          )}
+
+          <h3>이전 알림</h3>
+          {previousNotifications.length > 0 ? (
+            <ul>
+              {previousNotifications.map(notification => (
+                <li key={notification.id} className="read">
+                  <p>{notification.content}</p>
+                  <small>{new Date(notification.createdAt).toLocaleString()}</small>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>이전 알림이 없습니다.</p>
+          )}
         </section>
       )}
+
     </div>
   );
 };

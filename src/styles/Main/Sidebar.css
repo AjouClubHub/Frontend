@@ -2,12 +2,13 @@
 .sidebar {
   width: 200px;
   padding: 20px;
-  height: 100vh;
+  height: 100%;
+  overflow-y: auto;      
+  box-sizing: border-box;
   background-color: #ffffff;
   border-right: 1px solid #e0e0e0;
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
 }
 
 /* 제목 */
@@ -17,8 +18,10 @@
   color: #333;
 }
 
-/* 공통 버튼 스타일 */
-.sidebar button {
+/* —————— 여기부터 버튼 스타일 통일 —————— */
+/* 모든 direct 자식 버튼에 동일 스타일 적용 */
+.sidebar > button,
+.sidebar .category-buttons button {
   padding: 10px 12px;
   margin-bottom: 10px;
   background-color: white;
@@ -28,43 +31,43 @@
   cursor: pointer;
   border-radius: 5px;
   border: 1px solid #ccc;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
   display: flex;
   align-items: center;
 }
 
-/* Hover 시 */
-.sidebar button:hover {
+/* Hover 상태 */
+.sidebar > button:hover,
+.sidebar .category-buttons button:hover {
   background-color: #007bff;
   color: white;
+  border-color: #007bff;
 }
 
-/* 카테고리 필터 영역 */
-.sidebar .category-filter {
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid #ddd;
-}
-
-/* 선택된 카테고리 스타일 */
-.sidebar button.selected {
+/* 선택 상태 */
+.sidebar > button.selected,
+.sidebar .category-buttons button.selected {
   background-color: #007bff;
   color: white;
+  border-color: #007bff;
+}
+/* ———————————————————————————————— */
+
+/* 카테고리 버튼 감싸는 container */
+.category-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
 }
 
-/* 체크박스 스타일 */
-.sidebar button input[type="checkbox"] {
-  margin-right: 10px;
-  accent-color: #007bff;
-}
-
+/* main-container (content 영역) */
 .main-container {
   max-width: calc(100% - 200px); /* sidebar를 제외한 너비 */
-  margin-left: 200px; /* sidebar 공간 확보 */
-  padding: 100px 20px 20px 20px; /* 상단 여백 + 좌우 패딩 */
+  margin-left: 200px;           /* sidebar 공간 확보 */
+  padding: 100px 20px 20px 20px;/* 상단 여백 + 좌우 패딩 */
   box-sizing: border-box;
 }
-
 
 /* 반응형 - 중간 해상도 (1366px 이하) */
 @media (max-width: 1366px) {
@@ -73,13 +76,14 @@
     padding: 15px;
   }
 
-  .sidebar button {
-    font-size: 14px;
-    padding: 8px 10px;
-  }
-
   .sidebar h4 {
     font-size: 16px;
+  }
+
+  .sidebar > button,
+  .sidebar .category-buttons button {
+    font-size: 14px;
+    padding: 8px 10px;
   }
 }
 
@@ -102,16 +106,10 @@
     margin-bottom: 8px;
   }
 
-  .sidebar button {
+  .sidebar > button,
+  .sidebar .category-buttons button {
     width: 48%;
     margin-bottom: 8px;
     font-size: 14px;
-  }
-
-  .sidebar .category-filter {
-    width: 100%;
-    margin-top: 10px;
-    border-top: none;
-    padding-top: 10px;
   }
 }

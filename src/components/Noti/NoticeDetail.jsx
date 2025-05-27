@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useOutletContext } from "react-router-dom";
+import { useParams, useOutletContext ,useNavigate} from "react-router-dom";
 import axios from "axios";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -8,6 +8,7 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import "../../styles/Noti/NoticeDetail.css";
+import { IoMdArrowRoundBack } from "react-icons/io";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -21,6 +22,7 @@ const NoticeDetail = () => {
   const [editMode, setEditMode] = useState(false); // 수정 모드 상태
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState(''); // 카테고리 상태 추가
+   const navigate = useNavigate();
   
   const editor = useEditor({
     extensions: [
@@ -104,6 +106,7 @@ const NoticeDetail = () => {
 
   return (
     <div className="notice-detail">
+         <button onClick={() => navigate(-1)}><IoMdArrowRoundBack /></button>
       <h2>{editMode ? 
         <input 
           type="text" 

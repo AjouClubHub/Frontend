@@ -106,11 +106,13 @@ const Application = () => {
 
   return (
     <form onSubmit={handleSubmit} className="application-form">
-      <div className="application-back-button">
-        <button type="button" className="application-back-button-btn" onClick={() => navigate(`/main/home`)} ><FaArrowLeft /></button>
+      <div className='application-title'>
+        <button type="button" className='application-back-button-btn' onClick={()=> navigate(-1)}>
+          <FaArrowLeft />
+        </button>
+        <h2 className='application-title'>동아리 가입 신청</h2>
       </div>
-
-      <h2 className="application-title">동아리 가입 신청</h2>
+   
 
       <div className="application-form-box">
         <div className="application-form-group">

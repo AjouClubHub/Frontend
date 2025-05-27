@@ -37,60 +37,54 @@ const ClubsAdmin = () => {
   const currentClubs = myCreatedClubs.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
-    <div className="myclubs-container">
-      <h2>내가 관리 중인 동아리</h2>
+<div className="clubsadmin-container">
+  <h2>내가 관리 중인 클럽</h2>
 
-      <div className="club-list">
-  {currentClubs.map((club) => (
-    <div
-      key={club.id}
-      className="club-card"
-      onClick={() => navigate(`/clubsadmin/${club.id}`)}
-      style={{ cursor: 'pointer', border: '1px solid #ccc', padding: '16px', borderRadius: '8px', marginBottom: '16px' }}
-    >
-      {/* ✅ 이미지 추가 */}
-      {club.imaUrl && (
-        <img
-          src={club.imaUrl}
-          alt={`${club.name} 로고`}
-          style={{
-            width: '100%',
-            height: '180px',
-            objectFit: 'cover',
-            borderRadius: '8px',
-            marginBottom: '12px'
-          }}
-        />
-      )}
+  <div className="clubsadmin-club-list">
+    {currentClubs.map((club) => (
+      <div
+        key={club.id}
+        className="clubsadmin-club-card"
+        onClick={() => navigate(`/clubsadmin/${club.id}`)}
+        style={{ cursor: 'pointer' }}
+      >
+        {club.imaUrl && (
+          <img
+            src={club.imaUrl}
+            alt={`${club.name} 로고`}
+            className="clubsadmin-club-image"
+          />
+        )}
+        <div className="clubsadmin-card-body">
+          <h3>{club.name}</h3>
+          <p><strong>소개:</strong> {club.description}</p>
+          <p><strong>동방 위치:</strong> {club.location}</p>
+          <p><strong>키워드:</strong> {club.keyword}</p>
+          <p><strong>총 인원:</strong> {club.memberCount}명</p>
+          <p><strong>승인 대기:</strong> {club.pendingApplications}명</p>
+          <p><strong>공지사항 수:</strong> {club.announcementCount}개</p>
+        </div>
+      </div>
+    ))}
+  </div>
 
-      <h3>{club.name}</h3>
-      <p><strong>소개:</strong> {club.description}</p>
-      <p><strong>동방 위치:</strong> {club.location}</p>
-      <p><strong>키워드:</strong> {club.keyword}</p>
-      <p><strong>총 인원:</strong> {club.memberCount}명</p>
-      <p><strong>승인 대기:</strong> {club.pendingApplications}명</p>
-      <p><strong>공지사항 수:</strong> {club.announcementCount}개</p>
+  {myCreatedClubs.length > itemsPerPage && (
+    <div className="clubsadmin-pagination-wrapper">
+      <Pagination
+        activePage={currentPage}
+        itemsCountPerPage={itemsPerPage}
+        totalItemsCount={myCreatedClubs.length}
+        pageRangeDisplayed={5}
+        onChange={setCurrentPage}
+        prevPageText={"‹"}
+        nextPageText={"›"}
+        firstPageText={"«"}
+        lastPageText={"»"}
+      />
     </div>
-  ))}
+  )}
 </div>
 
-
-      {myCreatedClubs.length > itemsPerPage && (
-        <div className="pagination-wrapper">
-          <Pagination
-            activePage={currentPage}
-            itemsCountPerPage={itemsPerPage}
-            totalItemsCount={myCreatedClubs.length}
-            pageRangeDisplayed={5}
-            onChange={setCurrentPage}
-            prevPageText={"‹"}
-            nextPageText={"›"}
-            firstPageText={"«"}
-            lastPageText={"»"}
-          />
-        </div>
-      )}
-    </div>
   );
 };
 

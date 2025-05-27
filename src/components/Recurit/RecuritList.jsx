@@ -50,12 +50,15 @@ const RecuritList = () => {
   const handleTileClick = date => {
     const dateStr = date.toISOString().split('T')[0];
     const found = schedules.find(s => s.date === dateStr);
-    if (found) navigate(`/clubsadmin/${clubId}/recurit/${found.id}`);
+    if (found) {
+      navigate(`${found.id}`);
+    }
   };
 
   const grouped = Object.values(
     schedules.reduce((acc, curr) => {
-      (acc[curr.id] = acc[curr.id] || { id: curr.id, title: curr.title, dates: [] }).dates.push(curr.date);
+      if (!acc[curr.id]) acc[curr.id] = { id: curr.id, title: curr.title, dates: [] };
+      acc[curr.id].dates.push(curr.date);
       return acc;
     }, {})
   ).map(r => {
@@ -71,11 +74,11 @@ const RecuritList = () => {
         <div className="schedule-actions">
           <button
             className="create-button"
-            onClick={() => navigate(`/clubsadmin/${clubId}/recruitcreate`, { state: { mode: 'recruit' } })}
+            onClick={() => navigate(`recruitcreate`, { state: { mode: 'recruit' } })}
           >모집공고 등록하기</button>
           <button
             className="create-button"
-            onClick={() => navigate(`/clubsadmin/${clubId}/recruitcreate`, { state: { mode: 'schedule' } })}
+            onClick={() => navigate(`recruitcreate`, { state: { mode: 'schedule' } })}
           >일정 등록하기</button>
         </div>
       )}
@@ -96,8 +99,14 @@ const RecuritList = () => {
           <p>등록된 일정이 없습니다.</p>
         ) : (
           <ul>
-            {grouped.map((r, i) => (
-              <li key={i}>{r.start} ~ {r.end} - {r.title}</li>
+            {grouped.map(r => (
+              <li
+                key={r.id}
+                onClick={() => navigate(`${r.id}`)}
+                style={{ cursor: 'pointer' }}
+              >
+                {r.start} ~ {r.end} - {r.title}
+              </li>
             ))}
           </ul>
         )}
