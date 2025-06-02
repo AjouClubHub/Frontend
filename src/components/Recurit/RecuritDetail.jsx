@@ -53,7 +53,7 @@ const RecuritDetail = () => {
         }
       );
       // 삭제 후 리디렉션
-      navigate(`/clubs/${clubId}/schedules`);
+      navigate(`/clubsadmin/${clubId}/recruit`);
     } catch (err) {
       console.error("일정 삭제 실패:", err);
       setError("일정을 삭제하는 데 실패했습니다.");

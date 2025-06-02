@@ -1,4 +1,3 @@
-// src/components/Layout/Layout.jsx
 import React, { useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import MainNavbar from "../Main/MainNavbar";
@@ -12,6 +11,8 @@ const Layout = () => {
   const isMain = pathname.startsWith("/main");
   const token = localStorage.getItem("accessToken");
 
+  console.log("Layout", { pathname, isMain, token });
+
   const [searchTerm, setSearchTerm] = useState("");
   const [recruitStatus, setRecruitStatus] = useState("전체");
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -21,8 +22,14 @@ const Layout = () => {
       {!isAuth && (
         isMain
           ? <MainNavbar
-              onSearchChange={setSearchTerm}
-              onRecruitmentChange={setRecruitStatus}
+              onSearchChange={(v) => {
+                console.log("Layout에서 받은 검색어:", v);
+                setSearchTerm(v);
+              }}
+              onRecruitmentChange={(s) => {
+                console.log("Layout에서 받은 모집상태:", s);
+                setRecruitStatus(s);
+              }}
             />
           : <SimpleNavbar />
       )}
@@ -31,8 +38,9 @@ const Layout = () => {
         {/* 로그인한 사용자일 때만 사이드바 표시 */}
         {isMain && token && (
           <Sidebar 
-          selectedCategory={selectedCategory}
-          onCategoryClick={setSelectedCategory} />
+            selectedCategory={selectedCategory}
+            onCategoryClick={setSelectedCategory}
+          />
         )}
         <div className="page-content">
           <Outlet

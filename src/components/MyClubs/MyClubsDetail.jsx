@@ -69,9 +69,7 @@ const MyClubsDetail = () => {
         <aside className="club-sidebar">
           <h3>{club.ClubName || club.name}</h3>
           <p><strong>설명:</strong> {club.description}</p>
-          <p><strong>카테고리:</strong> {club.category}</p>
           <p><strong>동방 위치:</strong> {club.location}</p>
-          <p><strong>키워드:</strong> {club.keyword}</p>
           <p><strong>연락처:</strong> {club.contactInfo}</p>
           <p><strong>가입일:</strong> {new Date(club.joinedAt).toLocaleDateString()}</p>
         </aside>

@@ -23,7 +23,7 @@
   cursor: pointer;
   font-weight: 500;
   color: #333;
-  padding:10px 20px;
+  padding: 10px 20px;
   font-size: 1.25rem;
 }
 
@@ -59,7 +59,6 @@
   padding: 24px;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  min-height: 260px;
   transition: transform 0.2s ease-in-out;
   cursor: pointer;
   min-height: 360px;
@@ -145,19 +144,20 @@
   box-sizing: border-box;
 }
 
-.myclubs-container .status-pending .status-banner {
+/* 상태별 배너 색상 (같은 요소에 두 클래스를 지정) */
+.myclubs-container .status-banner.status-pending {
   background-color: #8988f1;
 }
 
-.myclubs-container .status-approved .status-banner {
+.myclubs-container .status-banner.status-approved {
   background-color: #5cb85c;
 }
 
-.myclubs-container .status-rejected .status-banner {
+.myclubs-container .status-banner.status-rejected {
   background-color: #d9534f;
 }
 
-.myclubs-container .status-withdrawn .status-banner {
+.myclubs-container .status-banner.status-withdrawn {
   background-color: #777;
 }
 

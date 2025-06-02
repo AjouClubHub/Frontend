@@ -104,6 +104,7 @@ const SignUpForm = () => {
       ) {
         alert("이메일 인증이 완료되었습니다.");
         setEmailVerified(true);
+        setEmailChecked(true);
       } else {
         alert(res.data.message || "인증 코드가 일치하지 않습니다.");
       }
@@ -175,11 +176,7 @@ const SignUpForm = () => {
       alert("학과를 선택해주세요");
       return;
     }
-    // 이메일 인증 체크 추가
-    if (!emailChecked || !emailVerified) {
-      alert("이메일 인증을 완료해주세요.");
-      return;
-    }
+   
     if (!studentIdChecked) {
       alert("학번 중복 확인을 해주세요.");
       return;

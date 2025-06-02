@@ -3,15 +3,17 @@ import { useNavigate, useOutletContext, useLocation } from 'react-router-dom';
 import Pagination from 'react-js-pagination';
 import axios from 'axios';
 import '../../styles/Main/Main.css';
-import InputMask from 'react-input-mask'
+import InputMask from 'react-input-mask';
 
 export default function Main() {
   const navigate = useNavigate();
   const location = useLocation();
   const { searchTerm, recruitStatus, selectedCategory } = useOutletContext();
+  console.log("Main이 받은 context:", searchTerm, recruitStatus, selectedCategory);
 
   const [allClubs, setAllClubs] = useState([]);
   const [recruitments, setRecruitments] = useState([]);
+  const [recruitMap, setRecruitMap] = useState({});
   const [filteredClubs, setFilteredClubs] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -25,109 +27,179 @@ export default function Main() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
   const [managerAuthSent, setManagerAuthSent] = useState(false);
-
-  // isVerified 는 localStorage 기반
   const [isVerified, setIsVerified] = useState(false);
   const [showManagerAuthForm, setShowManagerAuthForm] = useState(false);
 
-  // 로고 클릭 시 첫 페이지로
+  // 로고 클릭 → 페이지 리셋
   useEffect(() => {
+    console.log(
+      "Main useEffect 실행 (필터/페이징) →",
+      { searchTerm, recruitStatus, selectedCategory, currentPage }
+    );
+
     if (location.state?.resetPage) {
       setCurrentPage(1);
       navigate(location.pathname, { replace: true, state: {} });
     }
   }, [location.state, navigate, location.pathname]);
 
-  // 검색어나 카테고리 변경 시 페이지 리셋
+  // 검색/카테고리 변경 → 페이지 리셋
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, selectedCategory]);
 
-  // 데이터 페치
+  // ==============================
+  // ① 전체 데이터 가져오기 부분
+  // 거의 그대로 두되,
+  // - Promise.allSettled 방식으로 개별 모집공고를 병렬 조회하여 속도 개선
+  // - catch 대신 console.warn + 반환값을 이용해 실패해도 나머지 유지
+  // ==============================
   useEffect(() => {
     setIsLoading(true);
     const fetchData = async () => {
       const token = localStorage.getItem('accessToken');
-      const catParam = Array.isArray(selectedCategory)
-        ? selectedCategory.join(',')
-        : selectedCategory || '';
+      const authHeader = `Bearer Bearer ${token}`;
+      const catParam = selectedCategory || '';
 
+      // 1) 클럽 목록 조회
       let clubsData = [], clubsTotal = 0;
-      if (!searchTerm && !catParam) {
-        const res = await axios.get(
-          `${import.meta.env.VITE_APP_URL}/api/clubs`,
-          { headers: { Authorization: `Bearer Bearer ${token}` } }
-        );
-        const data = res.data?.data || res.data || [];
-        clubsData = Array.isArray(data) ? data : [];
-        clubsTotal = clubsData.length;
-      } else {
-        const res = await axios.get(
-          `${import.meta.env.VITE_APP_URL}/api/clubs/search`,
-          {
-            headers: { Authorization: `Bearer Bearer ${token}` },
-            params: {
-              query:     searchTerm     || undefined,
-              page:     currentPage - 1,
-              size:     clubsPerPage
-            }
-          }
-        );
-        const raw = res.data?.data;
-        if (Array.isArray(raw)) {
-          clubsData = raw;
-          clubsTotal = raw.length;
+      try {
+        if (!searchTerm && !catParam) {
+          // 검색어와 카테고리가 없으면 전체 클럽 조회
+          const res = await axios.get(
+            `${import.meta.env.VITE_APP_URL}/api/clubs`,
+            { headers: { Authorization: authHeader } }
+          );
+          const data = res.data?.data || res.data || [];
+          clubsData = Array.isArray(data) ? data : [];
+          clubsTotal = clubsData.length;
         } else {
-          clubsData = Array.isArray(raw?.content) ? raw.content : [];
-          clubsTotal =
-            typeof raw?.totalElements === 'number'
+          // 카테고리 파라미터만 적용 (검색어는 클라이언트 필터링에서 처리)
+          const res = await axios.get(
+            `${import.meta.env.VITE_APP_URL}/api/clubs`,
+            {
+              headers: { Authorization: authHeader },
+              params: catParam ? { category: catParam } : {}
+            }
+          );
+          const raw = res.data?.data;
+          if (Array.isArray(raw)) {
+            clubsData = raw;
+            clubsTotal = raw.length;
+          } else {
+            clubsData = Array.isArray(raw?.content) ? raw.content : [];
+            clubsTotal = typeof raw?.totalElements === 'number'
               ? raw.totalElements
               : clubsData.length;
+          }
         }
+      } catch {
+        // 실패 시 빈 배열로 처리
+        clubsData = [];
+        clubsTotal = 0;
       }
+
       setAllClubs(clubsData);
       setTotalCount(clubsTotal);
 
-      let recEndpoint = '/api/recruitments';
-      if (recruitStatus === '모집중')       recEndpoint = '/api/recruitments/open';
-      else if (recruitStatus === '모집마감') recEndpoint = '/api/recruitments/closed';
-
-      const recRes = await axios.get(
-        `${import.meta.env.VITE_APP_URL}${recEndpoint}`,
-        { headers: { Authorization: `Bearer Bearer ${token}` } }
+      // 2) 개별 모집공고 단건 조회 (병렬 처리 + Promise.allSettled)
+      const recruitPromises = clubsData.map(club =>
+        axios
+          .get(
+            `${import.meta.env.VITE_APP_URL}/api/clubs/${club.id}/recruitment`,
+            { headers: { Authorization: authHeader } }
+          )
+          .then(res => ({ id: club.id, data: res.data.data }))
+          .catch(() => {
+            // 404 등 에러 시 null 처리 (콘솔에 찍지 않음)
+            return { id: club.id, data: null };
+          })
       );
-      const recRaw = recRes.data?.data || recRes.data || [];
-      setRecruitments(Array.isArray(recRaw) ? recRaw : []);
+
+      try {
+        const results = await Promise.allSettled(recruitPromises);
+        const newRecMap = {};
+        results.forEach(item => {
+          if (item.status === 'fulfilled') {
+            const { id, data } = item.value;
+            newRecMap[id] = data;
+          } else {
+            // allSettled 중 item.status가 rejected인 경우도 빈 데이터로 처리 (로그 X)
+          }
+        });
+        setRecruitMap(newRecMap);
+      } catch {
+        // 병렬 조회 자체가 실패하면 빈 맵 처리
+        setRecruitMap({});
+      }
+
+      // 3) 전체 모집공고 리스트 조회 (필터링용)
+      let recEndpoint = '/api/recruitments';
+      if (recruitStatus === '모집중') recEndpoint = '/api/recruitments/open';
+      else if (recruitStatus === '모집마감') recEndpoint = '/api/recruitments/closed';
+      try {
+        const recRes = await axios.get(
+          `${import.meta.env.VITE_APP_URL}${recEndpoint}`,
+          { headers: { Authorization: authHeader } }
+        );
+        const recData = recRes.data?.data || recRes.data || [];
+        setRecruitments(recData);
+      } catch {
+        setRecruitments([]);
+      }
     };
 
     fetchData()
-      .catch(err => {
-        console.error('데이터 로딩 실패:', err);
-        setAllClubs([]);
-        setRecruitments([]);
-        setFilteredClubs([]);
-        setTotalCount(0);
-      })
       .finally(() => setIsLoading(false));
   }, [searchTerm, selectedCategory, recruitStatus, currentPage]);
+  // ==============================
 
-  // 필터링
+  // =======================================
+  // ② 새로운 필터링 useEffect
+  // allClubs와 recruitments를 바탕으로,
+  // - searchTerm (동아리명 또는 키워드 포함 여부)
+  // - selectedCategory (카테고리 일치 여부)
+  // - recruitStatus (모집중/모집마감/상시모집/전체)
+  // 를 클라이언트 사이드에서 한 번에 필터링
+  // 필터 결과(tmp)로 filteredClubs와 totalCount를 재설정
+  // =======================================
   useEffect(() => {
-    if (recruitStatus === '전체') {
-      setFilteredClubs(allClubs);
-    } else {
-      const allowed = new Set(recruitments.map(r => r.clubId ?? r.id));
-      setFilteredClubs(allClubs.filter(c => allowed.has(c.id)));
-    }
-  }, [allClubs, recruitments, recruitStatus]);
+    let tmp = [...allClubs];
 
-  // 페이지네이션
-  const indexLast  = currentPage * clubsPerPage;
+    // 1) 검색어 필터
+    if (searchTerm) {
+      const lower = searchTerm.toLowerCase();
+      tmp = tmp.filter(c => {
+        return (
+          (c.name && c.name.toLowerCase().includes(lower)) ||
+          (c.keyword && c.keyword.toLowerCase().includes(lower))
+        );
+      });
+    }
+
+    // 2) 카테고리 필터
+    if (selectedCategory) {
+      tmp = tmp.filter(c => c.category === selectedCategory);
+    }
+
+    // 3) 모집상태 필터
+    if (recruitStatus && recruitStatus !== '전체') {
+      const allowedIds = new Set(recruitments.map(r => r.clubId ?? r.id));
+      tmp = tmp.filter(c => allowedIds.has(c.id));
+    }
+
+    setFilteredClubs(tmp);
+    setTotalCount(tmp.length);
+  }, [allClubs, recruitments, searchTerm, selectedCategory, recruitStatus]);
+  // =======================================
+
+  // 페이지네이션 로직
+  const indexLast = currentPage * clubsPerPage;
   const indexFirst = indexLast - clubsPerPage;
   const currentClubs = filteredClubs.slice(indexFirst, indexLast);
   const handlePageChange = page => setCurrentPage(page);
 
-  // 모달 & 인증 로직
+  // 모달 열기/닫기
   const openModal = club => {
     setSelectedClub(club);
     setIsModalOpen(true);
@@ -135,43 +207,53 @@ export default function Main() {
     setPhoneNumber('');
     setVerificationCode('');
     setManagerAuthSent(false);
-    // localStorage 에 저장된 인증 여부 읽어오기
-    const saved = localStorage.getItem(`club-${club.id}-verified`);
-    setIsVerified(saved === 'true');
+    setIsVerified(localStorage.getItem(`club-${club.id}-verified`) === 'true');
     setShowManagerAuthForm(false);
   };
   const closeModal = () => setIsModalOpen(false);
 
+  // 문의하기 / 가입하기
   const handleContactClick = () => setShowContactInfo(true);
   const handleApplyClick = () => {
     closeModal();
     navigate(`/main/${selectedClub.id}/application`);
   };
 
+  // 임원진 인증 요청
   const handleManagerAuthRequest = async () => {
     if (!phoneNumber) return alert('전화번호를 입력해주세요.');
-    const token = localStorage.getItem('accessToken');
-    await axios.post(
-      `${import.meta.env.VITE_APP_URL}/api/clubs/${selectedClub.id}/manager-auth/request`,
-      { phoneNumber },
-      { headers: { Authorization: `Bearer Bearer ${token}` } }
-    );
-    setManagerAuthSent(true);
-    alert('인증 코드가 발송되었습니다.');
+    const authHeader = `Bearer Bearer ${localStorage.getItem('accessToken')}`;
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_APP_URL}/api/clubs/${selectedClub.id}/manager-auth/request`,
+        { phoneNumber },
+        { headers: { Authorization: authHeader } }
+      );
+      setManagerAuthSent(true);
+      alert('인증 코드가 발송되었습니다.');
+    } catch (err) {
+      console.error('인증 요청 실패:', err);
+      alert('인증 요청 중 오류가 발생했습니다.');
+    }
   };
 
+  // 임원진 인증 확인
   const handleManagerAuthVerify = async () => {
     if (!verificationCode) return alert('인증 코드를 입력하세요.');
-    const token = localStorage.getItem('accessToken');
-    await axios.patch(
-      `${import.meta.env.VITE_APP_URL}/api/clubs/${selectedClub.id}/manager-auth/verify`,
-      { phoneNumber, code: verificationCode },
-      { headers: { Authorization: `Bearer Bearer ${token}` } }
-    );
-    setIsVerified(true);
-    // localStorage 에도 저장
-    localStorage.setItem(`club-${selectedClub.id}-verified`, 'true');
-    alert('임원진 인증 완료!');
+    const authHeader = `Bearer Bearer ${localStorage.getItem('accessToken')}`;
+    try {
+      await axios.patch(
+        `${import.meta.env.VITE_APP_URL}/api/clubs/${selectedClub.id}/manager-auth/verify`,
+        { phoneNumber, code: verificationCode },
+        { headers: { Authorization: authHeader } }
+      );
+      localStorage.setItem(`club-${selectedClub.id}-verified`, 'true');
+      setIsVerified(true);
+      alert('임원진 인증 완료!');
+    } catch (err) {
+      console.error('인증 검증 실패:', err);
+      alert('인증 코드 확인 중 오류가 발생했습니다.');
+    }
   };
 
   return (
@@ -182,7 +264,7 @@ export default function Main() {
           src="/logo.png"
           alt="logo"
           width={150}
-          style={{ cursor:'pointer', marginRight:30 }}
+          style={{ cursor: 'pointer', marginRight: 30 }}
           onClick={() => navigate('/main/home', { state: { resetPage: true } })}
         />
         <div className="text-block">
@@ -196,35 +278,49 @@ export default function Main() {
 
       {/* 클럽 리스트 */}
       <div className="club-list">
-        {isLoading
-          ? <p>로딩 중...</p>
-          : currentClubs.length === 0
-            ? <p>조건에 맞는 동아리가 없습니다.</p>
-            : currentClubs.map(club => (
-                <div
-                  key={club.id}
-                  className="club-item"
-                  onClick={() => openModal(club)}
-                >
-                  {club.imaUrl && (
-                    <img
-                      src={club.imaUrl}
-                      alt={`${club.name} 로고`}
-                      style={{ width:'100%', height:200, objectFit:'cover', borderRadius:8 }}
-                    />
-                  )}
-                  <h2>{club.name}</h2>
-                  <p><strong>위치:</strong> {club.location}</p>
-                  <p><strong>소개:</strong> {club.description}</p>
-                  <div style={{ margin:'10px 0' }}>
-                    <strong>키워드:</strong>{' '}
-                    {club.keyword?.split(' ').map((w,i)=>(
-                      <span key={i} className="keyword-tag">{w}</span>
-                    ))}
-                  </div>
+        {isLoading ? (
+          <p>로딩 중...</p>
+        ) : currentClubs.length === 0 ? (
+          <p>조건에 맞는 동아리가 없습니다.</p>
+        ) : (
+          currentClubs.map(club => {
+            const rec = recruitMap[club.id];
+            return (
+              <div
+                key={club.id}
+                className="club-item"
+                onClick={() => openModal(club)}
+              >
+                {club.imaUrl && (
+                  <img
+                    src={club.imaUrl}
+                    alt={`${club.name} 로고`}
+                    style={{ width: '100%', height: 200, objectFit: 'cover', borderRadius: 8 }}
+                  />
+                )}
+                <h2>{club.name}</h2>
+                <p><strong>위치:</strong> {club.location}</p>
+                <p><strong>소개:</strong> {club.description}</p>
+                <div style={{ margin: '10px 0' }}>
+                  <strong>키워드:</strong>{' '}
+                  {club.keyword?.split(' ').map((w, i) => (
+                    <span key={i} className="keyword-tag">{w}</span>
+                  ))}
                 </div>
-              ))
-        }
+                <div className="card-recruit">
+                  {rec ? (
+                    <>
+                      <p><strong>모집공고:</strong> {rec.title}</p>
+                      <p>{rec.alwaysOpen ? '[상시모집]' : `${rec.startDate} ~ ${rec.endDate}`}</p>
+                    </>
+                  ) : (
+                    <p>모집공고 없음</p>
+                  )}
+                </div>
+              </div>
+            );
+          })
+        )}
       </div>
 
       {/* 페이지네이션 */}
@@ -247,11 +343,11 @@ export default function Main() {
             <button className="modal-close" onClick={closeModal}>×</button>
 
             {selectedClub.imaUrl && (
-              <div style={{ textAlign:'center', marginBottom:20 }}>
+              <div style={{ textAlign: 'center', marginBottom: 20 }}>
                 <img
                   src={selectedClub.imaUrl}
                   alt={selectedClub.name}
-                  style={{ width:300, height:'auto' }}
+                  style={{ width: 300, height: 'auto' }}
                 />
               </div>
             )}
@@ -261,16 +357,6 @@ export default function Main() {
             <p><strong>소개:</strong> {selectedClub.description}</p>
             <p><strong>키워드:</strong> {selectedClub.keyword}</p>
 
-            {selectedClub.snsUrl && (
-              <p>
-                <strong>SNS:</strong>{' '}
-                <a href={selectedClub.snsUrl} target="_blank" rel="noopener noreferrer">
-                  {selectedClub.snsUrl}
-                </a>
-              </p>
-            )}
-
-            {/* 인증 상태에 따라 다른 버튼 렌더링 */}
             {isVerified ? (
               <button
                 className="modal-btn"
@@ -286,24 +372,23 @@ export default function Main() {
                 >
                   임원진 인증하기
                 </button>
-
                 {showManagerAuthForm && (
                   <div className="auth-form">
-                     <InputMask
-      mask="999-9999-9999"
-      value={phoneNumber}
-      onChange={e => setPhoneNumber(e.target.value)}
-      disabled={managerAuthSent}
-      placeholder="전화번호(-형식)" 
-    >
-      {(inputProps) => (
-        <input
-          {...inputProps}
-          type="text"
-          className="your-input-class" /* 기존 스타일 그대로 적용 */
-        />
-      )}
-    </InputMask>
+                    <InputMask
+                      mask="999-9999-9999"
+                      value={phoneNumber}
+                      onChange={e => setPhoneNumber(e.target.value)}
+                      disabled={managerAuthSent}
+                      placeholder="전화번호(-형식)"
+                    >
+                      {inputProps => (
+                        <input
+                          {...inputProps}
+                          type="text"
+                          className="your-input-class"
+                        />
+                      )}
+                    </InputMask>
                     {!managerAuthSent ? (
                       <button onClick={handleManagerAuthRequest}>코드 발송</button>
                     ) : (
@@ -322,14 +407,9 @@ export default function Main() {
               </>
             )}
 
-            {/* 문의 / 가입 버튼 (항상 노출) */}
             <button className="modal-btn" onClick={handleContactClick}>문의하기</button>
-            {showContactInfo && (
-              <p><strong>연락처:</strong> {selectedClub.contactInfo}</p>
-            )}
+            {showContactInfo && <p><strong>연락처:</strong> {selectedClub.contactInfo}</p>}
             <button className="modal-btn apply" onClick={handleApplyClick}>가입하기</button>
-
-           
           </div>
         </div>
       )}

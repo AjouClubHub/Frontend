@@ -90,7 +90,7 @@ const MyClubs = () => {
     setJoinedClubs((prev) =>
       prev.filter((club) => club.clubId !== selectedClubId)
     );
-    // 옵티미스틱 UI: 신청 현황에선 해당 applicationId를 WITHDRAWN 상태로 업데이트
+    // 옵티미스틱 UI: 신청 현황에도 상태 반영
     setApplicationStatus((prev) =>
       prev.map((app) =>
         app.applicationId === selectedClubId
@@ -113,7 +113,6 @@ const MyClubs = () => {
     } catch (err) {
       console.error("클럽 탈퇴 실패:", err);
       alert("탈퇴 처리에 실패했습니다. 다시 시도해 주세요.");
-      // 필요 시 re-fetch 또는 복구 로직 추가
     }
   };
 
@@ -157,142 +156,168 @@ const MyClubs = () => {
       case "WITHDRAWN":
         return <div className="status-banner status-withdrawn">탈퇴 완료</div>;
       default:
-        return "신청 없음";
+        return null;
     }
   };
 
   return (
-<div className="myclubs-container">
-
-<div className="tabs">
-  <button
-    className={activeTab === "joined" ? "tab active" : "tab"}
-    onClick={() => setActiveTab("joined")}
-  >
-    내 클럽
-  </button>
-  <button
-    className={activeTab === "applications" ? "tab active" : "tab"}
-    onClick={() => setActiveTab("applications")}
-  >
-    신청 현황
-  </button>
-</div>
-
-{activeTab === "joined" && (
-  <>
-    <hr className="divider" />
-    <div className="myclubs-club-list">
-      {joinedClubs.length === 0 ? (
-        <p>가입된 클럽이 없습니다.</p>
-      ) : (
-        joinedClubs.map((club) => (
-          <div
-            key={club.clubId}
-            className="myclubs-club-card"
-            onClick={() => navigate(`/myclubs/${club.clubId}`)}
-            style={{ cursor: "pointer" }}
-          >
-            {club.imgUrl ? (
-              <img
-                src={club.imgUrl}
-                alt={club.clubName}
-                className="myclubs-club-image"
-              />
-            ) : (
-              <div className="myclubs-image-placeholder">
-                이미지 없음
-              </div>
-            )}
-            <h3>{club.clubName}</h3>
-            <p>
-              <strong>설명:</strong> {club.description}
-            </p>
-            <p>
-              <strong>동방위치:</strong> {club.location}
-            </p>
-            <p>
-              <strong>가입일:</strong>{" "}
-              {new Date(club.joinedAt).toLocaleDateString()}
-            </p>
-            <button
-              className="myclubs-withdraw-button"
-              onClick={(e) => {
-                e.stopPropagation();
-                openModal(club.clubId);
-              }}
-            >
-              탈퇴하기
-            </button>
-          </div>
-        ))
-      )}
-    </div>
-  </>
-)}
-
-{activeTab === "applications" && (
-  <>
-    <hr className="divider" />
-    <div className="myclubs-club-list">
-      {applicationStatus.length === 0 ? (
-        <p>신청한 클럽이 없습니다.</p>
-      ) : (
-        applicationStatus.map((app) => (
-          <div key={app.applicationId} className="myclubs-club-card">
-            <h3>{app.clubName}</h3>
-            {renderStatus(app.status, app.applicationId)}
-            <p>
-              <strong>신청일:</strong>{" "}
-              {new Date(app.appliedAt).toLocaleDateString()}
-            </p>
-          </div>
-        ))
-      )}
-    </div>
-  </>
-)}
-
-{/* 탈퇴 사유 모달 */}
-{showModal && (
-  <div className="myclubs-modal-overlay" onClick={closeModal}>
-    <div className="myclubs-modal-content" onClick={(e) => e.stopPropagation()}>
-      <button className="myclubs-modal-close" onClick={closeModal}>×</button>
-      <h3>탈퇴 사유 입력</h3>
-      <textarea
-        value={leavenReason}
-        onChange={(e) => setLeavenReason(e.target.value)}
-        placeholder="탈퇴 사유를 입력하세요..."
-        rows="4"
-        style={{ width: "100%", padding: "10px" }}
-      />
-      <div style={{ marginTop: "10px", textAlign: "right" }}>
-        <button onClick={handleWithdraw} className="myclubs-withdraw-btn">
-          탈퇴하기
+    <div className="myclubs-container">
+      <div className="tabs">
+        <button
+          className={activeTab === "joined" ? "tab active" : "tab"}
+          onClick={() => setActiveTab("joined")}
+        >
+          내 클럽
         </button>
-        <button onClick={closeModal} className="myclubs-cancel-btn">
-          취소
+        <button
+          className={activeTab === "applications" ? "tab active" : "tab"}
+          onClick={() => setActiveTab("applications")}
+        >
+          신청 현황
         </button>
       </div>
-    </div>
-  </div>
-)}
 
-{/* 거절 사유 모달 */}
-{isRejectionModalOpen && (
-  <div className="myclubs-modal-overlay" onClick={() => setIsRejectionModalOpen(false)}>
-    <div className="myclubs-modal-content" onClick={(e) => e.stopPropagation()}>
-      <button className="myclubs-modal-close" onClick={() => setIsRejectionModalOpen(false)}>×</button>
-      <h3>거절 사유</h3>
-      <p>{rejectionReason}</p>
-      <button onClick={() => setIsRejectionModalOpen(false)} className="myclubs-cancel-btn">
-        닫기
-      </button>
-    </div>
-  </div>
-)}
-</div>
+      {activeTab === "joined" && (
+        <>
+          <hr className="divider" />
+          <div className="myclubs-club-list">
+            {joinedClubs.length === 0 ? (
+              <p>가입된 클럽이 없습니다.</p>
+            ) : (
+              joinedClubs.map((club) => (
+                <div
+                  key={club.clubId}
+                  className="myclubs-club-card"
+                  onClick={() => navigate(`/myclubs/${club.clubId}`)}
+                >
+               
 
+                  {club.imgUrl ? (
+                    <img
+                      src={club.imgUrl}
+                      alt={club.clubName}
+                      className="myclubs-club-image"
+                    />
+                  ) : (
+                    <div className="myclubs-image-placeholder">
+                      이미지 없음
+                    </div>
+                  )}
+                  <h3>{club.clubName}</h3>
+                  <p>
+                    <strong>설명:</strong> {club.description}
+                  </p>
+                  <p>
+                    <strong>동방위치:</strong> {club.location}
+                  </p>
+                  <p>
+                    <strong>가입일:</strong>{" "}
+                    {new Date(club.joinedAt).toLocaleDateString()}
+                  </p>
+                  <button
+                    className="myclubs-withdraw-button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openModal(club.clubId);
+                    }}
+                  >
+                    탈퇴하기
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+        </>
+      )}
+
+      {activeTab === "applications" && (
+        <>
+          <hr className="divider" />
+          <div className="myclubs-club-list">
+            {applicationStatus.length === 0 ? (
+              <p>신청한 클럽이 없습니다.</p>
+            ) : (
+              applicationStatus.map((app) => (
+                <div key={app.applicationId} className="myclubs-club-card">
+                  {/* 상태 배너 */}
+                  {renderStatus(app.status, app.applicationId)}
+
+                  <h3>{app.clubName}</h3>
+                  <p>
+                    <strong>신청일:</strong>{" "}
+                    {new Date(app.appliedAt).toLocaleDateString()}
+                  </p>
+                  <p>
+                    <strong>신청현황:</strong> {app.status}
+                  </p>
+                </div>
+              ))
+            )}
+          </div>
+        </>
+      )}
+
+      {/* 탈퇴 사유 모달 */}
+      {showModal && (
+        <div className="myclubs-modal-overlay" onClick={closeModal}>
+          <div
+            className="myclubs-modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="myclubs-modal-close"
+              onClick={closeModal}
+            >
+              ×
+            </button>
+            <h3>탈퇴 사유 입력</h3>
+            <textarea
+              value={leavenReason}
+              onChange={(e) => setLeavenReason(e.target.value)}
+              placeholder="탈퇴 사유를 입력하세요..."
+              rows="4"
+              style={{ width: "100%", padding: "10px" }}
+            />
+            <div style={{ marginTop: "10px", textAlign: "right" }}>
+              <button onClick={handleWithdraw} className="myclubs-withdraw-btn">
+                탈퇴하기
+              </button>
+              <button onClick={closeModal} className="myclubs-cancel-btn">
+                취소
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 거절 사유 모달 */}
+      {isRejectionModalOpen && (
+        <div
+          className="myclubs-modal-overlay"
+          onClick={() => setIsRejectionModalOpen(false)}
+        >
+          <div
+            className="myclubs-modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="myclubs-modal-close"
+              onClick={() => setIsRejectionModalOpen(false)}
+            >
+              ×
+            </button>
+            <h3>거절 사유</h3>
+            <p>{rejectionReason}</p>
+            <button
+              onClick={() => setIsRejectionModalOpen(false)}
+              className="myclubs-cancel-btn"
+            >
+              닫기
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

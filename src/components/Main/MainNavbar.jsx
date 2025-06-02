@@ -35,6 +35,8 @@ export default function MainNavbar({ onSearchChange, onRecruitmentChange }) {
           placeholder="🔍 동아리명 또는 키워드 검색"
         />
          <button onClick={() => navigate("/auth/login")}>로그인</button>  
+         <button onClick={() => navigate("/auth/signup")}>회원가입</button>  
+         
       </nav>
       
       

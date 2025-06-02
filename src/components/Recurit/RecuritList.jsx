@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams, useOutletContext } from 'react-router-dom';
+import { useNavigate, useParams, useOutletContext, useLocation } from 'react-router-dom';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import '../../styles/Recurit/RecuritList.css';
@@ -9,8 +9,14 @@ const RecuritList = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [schedules, setSchedules] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation();
   const { clubId } = useParams();
   const { isManager } = useOutletContext();
+
+  // clubsadmin vs myclubs 판별용 basePath
+  const basePath = location.pathname.startsWith('/clubsadmin')
+    ? `/clubsadmin/${clubId}`
+    : `/myclubs/${clubId}`;
 
   useEffect(() => {
     fetchSchedules();
@@ -22,8 +28,11 @@ const RecuritList = () => {
     const end = new Date(Date.now() + 1000 * 60 * 60 * 24 * 60).toISOString();
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_APP_URL}/api/clubs/${clubId}/schedules?start=${start}&end=${end}`,
-        { headers: { Authorization: `Bearer Bearer ${token}` } }
+        `${import.meta.env.VITE_APP_URL}/api/clubs/${clubId}/schedules`,
+        {
+          headers: { Authorization: `Bearer Bearer ${token}` },
+          params: { start, end },
+        }
       );
       setSchedules(parseSchedules(res.data.data || []));
     } catch (err) {
@@ -31,24 +40,33 @@ const RecuritList = () => {
     }
   };
 
-  const parseSchedules = data => data.flatMap(item => {
-    const dates = getDateRange(item.startTime, item.endTime);
-    return dates.map(d => ({ id: item.id, date: d, title: item.title }));
-  });
+  // UTC 대신 로컬 yyyy-MM-dd 포맷
+  const formatLocalDate = (date) => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  };
 
   const getDateRange = (start, end) => {
     const result = [];
     const cur = new Date(start);
     const last = new Date(end);
     while (cur <= last) {
-      result.push(cur.toISOString().split('T')[0]);
+      result.push(formatLocalDate(cur));
       cur.setDate(cur.getDate() + 1);
     }
     return result;
   };
 
-  const handleTileClick = date => {
-    const dateStr = date.toISOString().split('T')[0];
+  const parseSchedules = (data) =>
+    data.flatMap(item => {
+      const dates = getDateRange(item.startTime, item.endTime);
+      return dates.map(d => ({ id: item.id, date: d, title: item.title }));
+    });
+
+  const handleTileClick = (date) => {
+    const dateStr = formatLocalDate(date);
     const found = schedules.find(s => s.date === dateStr);
     if (found) {
       navigate(`${found.id}`);
@@ -74,12 +92,20 @@ const RecuritList = () => {
         <div className="schedule-actions">
           <button
             className="create-button"
-            onClick={() => navigate(`recruitcreate`, { state: { mode: 'recruit' } })}
-          >모집공고 등록하기</button>
+            onClick={() =>
+              navigate(`${basePath}/recruitcreate`, { state: { mode: 'recruit' } })
+            }
+          >
+            모집공고 등록하기
+          </button>
           <button
             className="create-button"
-            onClick={() => navigate(`recruitcreate`, { state: { mode: 'schedule' } })}
-          >일정 등록하기</button>
+            onClick={() =>
+              navigate(`${basePath}/recruitcreate`, { state: { mode: 'schedule' } })
+            }
+          >
+            일정 등록하기
+          </button>
         </div>
       )}
 
@@ -87,7 +113,7 @@ const RecuritList = () => {
         onChange={setSelectedDate}
         value={selectedDate}
         tileContent={({ date }) => {
-          const dateStr = date.toISOString().split('T')[0];
+          const dateStr = formatLocalDate(date);
           return schedules.some(s => s.date === dateStr) ? <div className="dot" /> : null;
         }}
         onClickDay={handleTileClick}
