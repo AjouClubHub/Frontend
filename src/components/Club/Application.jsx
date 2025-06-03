@@ -14,6 +14,7 @@ const Application = () => {
   });
   const navigate = useNavigate();
   const { clubId } = useParams();
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -63,7 +64,7 @@ const Application = () => {
       );
       if (response.status === 200) {
         alert('가입 신청이 성공적으로 완료되었습니다.');
-        navigate(-1);
+        navigate(('/main/home', { state: { resetPage: true } }));
       }
     } catch (error) {
       const data = error.response?.data || {};
@@ -74,7 +75,7 @@ const Application = () => {
       } else if (code === 'MAJOR_REQUIREMENT_NOT_MET' || code === 'DUPLICATE_APPLICATION') {
         alert(message);
       } else {
-        alert('❌ 서버와의 통신 중 오류가 발생했습니다. 다시 시도해 주세요.');
+        alert('서버와의 통신 중 오류가 발생했습니다. 다시 시도해 주세요.');
       }
     }
   };

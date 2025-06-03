@@ -7,7 +7,6 @@
   padding: 20px;
 }
 
-/* Tabs */
 .myclubs-container .tabs {
   display: flex;
   gap: 16px;
@@ -32,7 +31,6 @@
   color: #fff;
 }
 
-/* Divider */
 .myclubs-container .divider {
   width: 100%;
   height: 1px;
@@ -41,7 +39,6 @@
   margin: 16px 0;
 }
 
-/* Club List Grid */
 .myclubs-container .myclubs-club-list {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -52,11 +49,21 @@
   box-sizing: border-box;
 }
 
-/* Club Cards */
+.myclubs-container .myclubs-club-list.applications-view {
+  gap: 16px;
+}
+
+.myclubs-container .myclubs-club-list.applications-view .myclubs-club-card {
+  padding: 16px;
+  padding-top: 48px;
+  min-height: 200px;
+}
+
 .myclubs-container .myclubs-club-card {
   position: relative;
   background-color: #fff;
   padding: 24px;
+  padding-top: 64px;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   transition: transform 0.2s ease-in-out;
@@ -82,13 +89,12 @@
 
 .myclubs-container .myclubs-club-image {
   width: 100%;
-  height: 120px;
+  height: 200px;
   object-fit: cover;
   border-radius: 6px;
   margin-bottom: 10px;
 }
 
-/* Buttons inside cards */
 .myclubs-container .myclubs-withdraw-button,
 .myclubs-container .myclubs-cancel-application-btn,
 .myclubs-container .myclubs-rejection-button {
@@ -129,22 +135,24 @@
   background-color: #f2dede;
 }
 
-/* Status Banner */
 .myclubs-container .status-banner {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  padding: 10px 0;
+  height: 40px;
+  padding: 0;
   text-align: center;
   font-weight: bold;
   color: #fff;
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
   box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* 상태별 배너 색상 (같은 요소에 두 클래스를 지정) */
 .myclubs-container .status-banner.status-pending {
   background-color: #8988f1;
 }
@@ -161,7 +169,6 @@
   background-color: #777;
 }
 
-/* Modals */
 .myclubs-container .myclubs-modal-overlay {
   position: fixed;
   top: 0;
@@ -224,7 +231,6 @@
   background-color: #999;
 }
 
-/* Responsive */
 @media (max-width: 1024px) {
   .myclubs-container .myclubs-club-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));

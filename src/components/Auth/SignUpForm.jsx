@@ -176,7 +176,7 @@ const SignUpForm = () => {
       alert("학과를 선택해주세요");
       return;
     }
-   
+ 
     if (!studentIdChecked) {
       alert("학번 중복 확인을 해주세요.");
       return;

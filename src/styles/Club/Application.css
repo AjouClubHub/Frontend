@@ -3,31 +3,31 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start; /* 상단 정렬 */
+    justify-content: flex-start; 
     width: 700px;
-    min-height: 80vh;  /* 화면 크기에 맞춰 늘어남 */
+    min-height: 80vh;  
     background-color: #f7f7f7;
     padding: 20px;
     box-sizing: border-box;
     max-width: 700px;
     margin: 0 auto;
-    overflow-y: auto;  /* 수직 스크롤이 생기도록 */
-    border-radius: 15px; /* 곡선 모서리 */
-    background-color: #fff; /* 배경을 흰색으로 설정 */
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 추가 */
+    overflow-y: auto; 
+    border-radius: 15px; 
+    background-color: #fff; 
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); 
 }
 
-/* 헤더 스타일 */
+
 .application-form h2 {
     font-size: 24px;
     color: #333;
     margin-bottom: 20px;
-    text-align: left; /* 제목을 왼쪽 정렬 */
-    display: inline-block; /* 제목을 인라인 블록으로 설정하여 버튼과 같은 행에 배치 */
-    margin-right: 40px; /* 뒤로가기 버튼과의 간격을 조정 */
+    text-align: left; 
+    display: inline-block;
+    margin-right: 40px;
 }
 
-/* 뒤로 가기 버튼 스타일 */
+
 .application-back-button {
     position: absolute;
     top: 0px;
@@ -68,12 +68,12 @@
     transition: border-color 0.3s ease;
 }
 
-/* 선택 박스 스타일 */
+
 .application-form .react-select__control {
     border-radius: 5px;
 }
 
-/* 입력 필드 포커스 */
+
 .application-form input:focus,
 .application-form select:focus,
 .application-form textarea:focus {
@@ -81,7 +81,7 @@
     outline: none;
 }
 
-/* 버튼 스타일 */
+
 .application-submit-btn {
     width: 100%;
     padding: 14px;
@@ -99,14 +99,14 @@
     background-color: #0056b3; /* 파란색 hover 효과 */
 }
 
-/* 묶은 박스 스타일 */
+
 .application-form-box {
     width: 100%;
     padding: 20px;
     margin-bottom: 20px;
 }
 
-/* 가로로 배치되는 항목 스타일 */
+
 .application-form-group {
     display: flex;
     justify-content: space-between;
@@ -114,7 +114,7 @@
     gap: 20px;
 }
 
-/* 각 항목을 1/2 너비로 설정하여 나란히 배치 */
+
 .application-form-group .application-half-width {
     width: 48%; /* 각 항목을 반으로 나눔 */
 }

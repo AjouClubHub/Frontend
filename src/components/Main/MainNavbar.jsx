@@ -3,6 +3,15 @@ import { useNavigate } from "react-router-dom";
 import { useRecoilValue } from 'recoil';
 import { notificationPopupState } from '../store/notificationPopupState';
 import "../../styles/Main/MainNavbar.css";
+import { LuLogIn } from "react-icons/lu";
+import { MdOutlineAccountCircle } from "react-icons/md";
+import { MdManageAccounts } from "react-icons/md";
+import { MdLogout } from "react-icons/md";
+import { FaRegCalendarCheck } from "react-icons/fa";
+import { FaCalendarTimes } from "react-icons/fa";
+import { FaCalendarPlus } from "react-icons/fa";
+import { FaCalendarMinus } from "react-icons/fa";
+import { FaCalendarAlt } from "react-icons/fa";
 
 export default function MainNavbar({ onSearchChange, onRecruitmentChange }) {
   const navigate = useNavigate();
@@ -34,7 +43,7 @@ export default function MainNavbar({ onSearchChange, onRecruitmentChange }) {
           onChange={handleSearchInput}
           placeholder="🔍 동아리명 또는 키워드 검색"
         />
-         <button onClick={() => navigate("/auth/login")}>로그인</button>  
+         <button onClick={() => navigate("/auth/login")}><LuLogIn />로그인</button>  
          <button onClick={() => navigate("/auth/signup")}>회원가입</button>  
          
       </nav>
@@ -64,27 +73,34 @@ export default function MainNavbar({ onSearchChange, onRecruitmentChange }) {
       />
 
 <div className="menu-wrapper">
-        <button onClick={() => toggleMenu("status")}>모집 상태</button>
+        <button onClick={() => toggleMenu("status")}><FaRegCalendarCheck size={18}
+                  style={{ marginRight: '8px', verticalAlign: 'middle' }}/>모집 상태</button>
         {activeMenu === "status" && (
           <div className="status-menu">
-            <button onClick={() => onRecruitmentChange("전체")}>전체</button>
-            <button onClick={() => onRecruitmentChange("모집중")}>모집중</button>
-            <button onClick={() => onRecruitmentChange("모집마감")}>모집마감</button>
-            <button onClick={() => onRecruitmentChange("상시모집")}>상시모집</button>
+            <button onClick={() => onRecruitmentChange("전체")}><FaCalendarAlt size={18}
+                  style={{ marginRight: '8px', verticalAlign: 'middle' }}/>전체</button>
+            <button onClick={() => onRecruitmentChange("모집중")}><FaCalendarPlus size={18}
+                  style={{ marginRight: '8px', verticalAlign: 'middle' }}/>모집중</button>
+            <button onClick={() => onRecruitmentChange("모집마감")}><FaCalendarTimes size={18}
+                  style={{ marginRight: '8px', verticalAlign: 'middle' }}/>모집마감</button>
+            <button onClick={() => onRecruitmentChange("상시모집")}><FaCalendarMinus size={18}
+                  style={{ marginRight: '8px', verticalAlign: 'middle' }}/>상시모집</button>
           </div>
         )}
       </div>
 
-      {/* 계정 메뉴 래퍼 */}
       <div className="menu-wrapper">
-        <button onClick={() => toggleMenu("account")}>계정</button>
+        <button onClick={() => toggleMenu("account")}><MdOutlineAccountCircle size={18}
+                  style={{ marginRight: '8px', verticalAlign: 'middle' }}/>계정</button>
         {activeMenu === "account" && (
           <div className="account-menu">
-            <button onClick={() => navigate("/auth/setting")}>계정조회</button>
+            <button onClick={() => navigate("/auth/setting")}><MdManageAccounts size={18}
+                  style={{ marginRight: '8px', verticalAlign: 'middle' }}/>계정조회</button>
             <button onClick={() => {
               localStorage.removeItem("accessToken");
               navigate("/auth/login");
-            }}>로그아웃</button>
+            }}><MdLogout size={18}
+            style={{ marginRight: '8px', verticalAlign: 'middle' }} />로그아웃</button>
           </div>
         )}
       </div>

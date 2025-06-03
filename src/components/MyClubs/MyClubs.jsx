@@ -9,7 +9,6 @@ const MyClubs = () => {
   const [applicationStatus, setApplicationStatus] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 모달 관련 상태
   const [showModal, setShowModal] = useState(false);
   const [selectedClubId, setSelectedClubId] = useState(null);
   const [leavenReason, setLeavenReason] = useState("");
@@ -21,7 +20,6 @@ const MyClubs = () => {
   const { clubId } = useParams();
   const token = localStorage.getItem("accessToken");
 
-  // 데이터 Fetch
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -63,7 +61,6 @@ const MyClubs = () => {
     }
   };
 
-  // 거절 사유 조회
   const getRejectionReason = async (applicationId) => {
     try {
       const res = await axios.get(
@@ -79,18 +76,18 @@ const MyClubs = () => {
     }
   };
 
-  // 클럽 탈퇴
+
   const handleWithdraw = async () => {
     if (!leavenReason) {
       alert("탈퇴 사유를 입력해야 합니다.");
       return;
     }
 
-    // 옵티미스틱 UI: 내 클럽 목록에서 제거
+
     setJoinedClubs((prev) =>
       prev.filter((club) => club.clubId !== selectedClubId)
     );
-    // 옵티미스틱 UI: 신청 현황에도 상태 반영
+ 
     setApplicationStatus((prev) =>
       prev.map((app) =>
         app.applicationId === selectedClubId
@@ -105,7 +102,7 @@ const MyClubs = () => {
       const res = await axios.delete(
         `${import.meta.env.VITE_APP_URL}/api/clubs/${selectedClubId}/withdraw`,
         {
-          headers: { Authorization: `Bearer Bearer ${token}` },
+          headers: { Authorization: `Bearer ${token}` },
           data: { leavenReason },
         }
       );
@@ -125,6 +122,7 @@ const MyClubs = () => {
     setLeavenReason("");
   };
 
+ 
   const renderStatus = (status, applicationId) => {
     switch (status) {
       case "PENDING":
@@ -190,8 +188,6 @@ const MyClubs = () => {
                   className="myclubs-club-card"
                   onClick={() => navigate(`/myclubs/${club.clubId}`)}
                 >
-               
-
                   {club.imgUrl ? (
                     <img
                       src={club.imgUrl}
@@ -208,7 +204,7 @@ const MyClubs = () => {
                     <strong>설명:</strong> {club.description}
                   </p>
                   <p>
-                    <strong>동방위치:</strong> {club.location}
+                    <strong>동방 위치:</strong> {club.location}
                   </p>
                   <p>
                     <strong>가입일:</strong>{" "}
@@ -233,14 +229,17 @@ const MyClubs = () => {
       {activeTab === "applications" && (
         <>
           <hr className="divider" />
-          <div className="myclubs-club-list">
+          <div className={`myclubs-club-list ${
+    activeTab === "applications" ? "applications-view" : ""
+  }`}>
             {applicationStatus.length === 0 ? (
               <p>신청한 클럽이 없습니다.</p>
             ) : (
               applicationStatus.map((app) => (
                 <div key={app.applicationId} className="myclubs-club-card">
-                  {/* 상태 배너 */}
-                  {renderStatus(app.status, app.applicationId)}
+                  <div className="with-banner">
+                    {renderStatus(app.status, app.applicationId)}
+                  </div>
 
                   <h3>{app.clubName}</h3>
                   <p>
@@ -257,17 +256,13 @@ const MyClubs = () => {
         </>
       )}
 
-      {/* 탈퇴 사유 모달 */}
       {showModal && (
         <div className="myclubs-modal-overlay" onClick={closeModal}>
           <div
             className="myclubs-modal-content"
             onClick={(e) => e.stopPropagation()}
           >
-            <button
-              className="myclubs-modal-close"
-              onClick={closeModal}
-            >
+            <button className="myclubs-modal-close" onClick={closeModal}>
               ×
             </button>
             <h3>탈퇴 사유 입력</h3>
@@ -290,7 +285,6 @@ const MyClubs = () => {
         </div>
       )}
 
-      {/* 거절 사유 모달 */}
       {isRejectionModalOpen && (
         <div
           className="myclubs-modal-overlay"
