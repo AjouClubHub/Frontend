@@ -65,6 +65,7 @@ const Application = () => {
       if (response.status === 200) {
         alert('가입 신청이 성공적으로 완료되었습니다.');
         navigate(('/main/home', { state: { resetPage: true } }));
+        navigate(-1);
       }
     } catch (error) {
       const data = error.response?.data || {};

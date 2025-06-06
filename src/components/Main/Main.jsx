@@ -9,7 +9,6 @@ export default function Main() {
   const navigate = useNavigate();
   const location = useLocation();
   const { searchTerm, recruitStatus, selectedCategory } = useOutletContext();
-  console.log("Main이 받은 context:", searchTerm, recruitStatus, selectedCategory);
 
   const [allClubs, setAllClubs] = useState([]);
   const [recruitments, setRecruitments] = useState([]);
@@ -30,13 +29,7 @@ export default function Main() {
   const [isVerified, setIsVerified] = useState(false);
   const [showManagerAuthForm, setShowManagerAuthForm] = useState(false);
 
-  // 로고 클릭 → 페이지 리셋
   useEffect(() => {
-    console.log(
-      "Main useEffect 실행 (필터/페이징) →",
-      { searchTerm, recruitStatus, selectedCategory, currentPage }
-    );
-
     if (location.state?.resetPage) {
       setCurrentPage(1);
       navigate(location.pathname, { replace: true, state: {} });
@@ -48,12 +41,6 @@ export default function Main() {
     setCurrentPage(1);
   }, [searchTerm, selectedCategory]);
 
-  // ==============================
-  // ① 전체 데이터 가져오기 부분
-  // 거의 그대로 두되,
-  // - Promise.allSettled 방식으로 개별 모집공고를 병렬 조회하여 속도 개선
-  // - catch 대신 console.warn + 반환값을 이용해 실패해도 나머지 유지
-  // ==============================
   useEffect(() => {
     setIsLoading(true);
     const fetchData = async () => {
@@ -152,21 +139,11 @@ export default function Main() {
     fetchData()
       .finally(() => setIsLoading(false));
   }, [searchTerm, selectedCategory, recruitStatus, currentPage]);
-  // ==============================
-
-  // =======================================
-  // ② 새로운 필터링 useEffect
-  // allClubs와 recruitments를 바탕으로,
-  // - searchTerm (동아리명 또는 키워드 포함 여부)
-  // - selectedCategory (카테고리 일치 여부)
-  // - recruitStatus (모집중/모집마감/상시모집/전체)
-  // 를 클라이언트 사이드에서 한 번에 필터링
-  // 필터 결과(tmp)로 filteredClubs와 totalCount를 재설정
-  // =======================================
+ 
   useEffect(() => {
     let tmp = [...allClubs];
 
-    // 1) 검색어 필터
+  
     if (searchTerm) {
       const lower = searchTerm.toLowerCase();
       tmp = tmp.filter(c => {
@@ -177,12 +154,12 @@ export default function Main() {
       });
     }
 
-    // 2) 카테고리 필터
+
     if (selectedCategory) {
       tmp = tmp.filter(c => c.category === selectedCategory);
     }
 
-    // 3) 모집상태 필터
+
     if (recruitStatus && recruitStatus !== '전체') {
       const allowedIds = new Set(recruitments.map(r => r.clubId ?? r.id));
       tmp = tmp.filter(c => allowedIds.has(c.id));
@@ -191,15 +168,15 @@ export default function Main() {
     setFilteredClubs(tmp);
     setTotalCount(tmp.length);
   }, [allClubs, recruitments, searchTerm, selectedCategory, recruitStatus]);
-  // =======================================
 
-  // 페이지네이션 로직
+
+
   const indexLast = currentPage * clubsPerPage;
   const indexFirst = indexLast - clubsPerPage;
   const currentClubs = filteredClubs.slice(indexFirst, indexLast);
   const handlePageChange = page => setCurrentPage(page);
 
-  // 모달 열기/닫기
+
   const openModal = club => {
     setSelectedClub(club);
     setIsModalOpen(true);

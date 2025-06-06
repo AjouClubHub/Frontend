@@ -13,6 +13,7 @@ import { FaCalendarPlus } from "react-icons/fa";
 import { FaCalendarMinus } from "react-icons/fa";
 import { FaCalendarAlt } from "react-icons/fa";
 
+
 export default function MainNavbar({ onSearchChange, onRecruitmentChange }) {
   const navigate = useNavigate();
   const [activeMenu, setActiveMenu] = useState(null);

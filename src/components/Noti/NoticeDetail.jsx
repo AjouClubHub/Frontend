@@ -17,7 +17,7 @@ const NoticeDetail = () => {
   const { clubId, announcementId } = useParams();
   const { isManager } = useOutletContext(); // 부모에서 전달된 isManager 값 받기
   const [notice, setNotice] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading]  = useState(true);
   const [error, setError] = useState(null);
   const [editMode, setEditMode] = useState(false); // 수정 모드 상태
   const [title, setTitle] = useState('');
