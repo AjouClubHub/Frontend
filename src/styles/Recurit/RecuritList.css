@@ -112,3 +112,72 @@
   color: #bbb !important;
 }
 
+@media (min-width: 1200px) {
+  .react-calendar {
+    width: 600px;      /* 고정 너비 */
+  }
+  .calendar-wrapper {
+    padding: 30px;
+  }
+  .schedule-actions .create-button {
+    padding: 10px 16px;
+    font-size: 16px;
+  }
+  .schedule-list,
+  .react-calendar {
+    max-width: 600px;
+  }
+}
+@media (max-width: 1199px) and (min-width: 768px) {
+  .react-calendar {
+    width: 80%;        /* 부모 대비 80% */
+  }
+  .calendar-wrapper {
+    padding: 24px;
+  }
+  .schedule-actions .create-button {
+    padding: 9px 14px;
+    font-size: 15px;
+  }
+  .schedule-list,
+  .react-calendar {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 767px) {
+  .calendar-wrapper {
+    padding: 16px;
+  }
+
+  .react-calendar {
+    width: 100%;       /* 화면 꽉 채우기 */
+    max-width: 100%;
+  }
+
+  /* 버튼과 리스트도 폭 맞추기 */
+  .schedule-actions {
+    align-self: stretch;   /* 양쪽 끝까지 */
+    justify-content: center;
+  }
+  .schedule-actions .create-button {
+    flex: 1;               /* 버튼이 같은 크기로 */
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  .schedule-list {
+    width: 100%;
+    padding: 0 8px;
+  }
+
+  /* 캘린더 내부 타일(글자 크기 축소) */
+  .react-calendar__tile {
+    font-size: 0.85rem !important;
+    padding: 8px 0 !important;
+  }
+  .react-calendar__tile--now,
+  .react-calendar__tile--active {
+    font-size: 0.9rem !important;
+  }
+}

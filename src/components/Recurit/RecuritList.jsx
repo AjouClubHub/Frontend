@@ -10,20 +10,23 @@ const RecuritList = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [schedules, setSchedules] = useState([]);
   const [recruit, setRecruit] = useState(null);
+
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = useLocation();             // ← 추가
   const { clubId } = useParams();
   const { isManager } = useOutletContext();
 
-  // basePath 계산: "/clubsadmin/:clubId" 또는 "/myclubs/:clubId"
+  // basePath 계산
   const basePath = location.pathname.startsWith(`/clubsadmin/${clubId}`)
     ? `/clubsadmin/${clubId}`
     : `/myclubs/${clubId}`;
 
+  // ─── 변경된 useEffect ───────────────────────────
   useEffect(() => {
     fetchSchedules();
     fetchRecruit();
-  }, [clubId]);
+  }, [clubId, location.key]);  // ← location.key 추가
+  // ────────────────────────────────────────────────
 
   // 1) 일정 조회 (60일 뒤까지)
   const fetchSchedules = async () => {
@@ -53,6 +56,7 @@ const RecuritList = () => {
         { headers: { Authorization: `Bearer Bearer ${token}` } }
       );
       setRecruit(res.data.data || null);
+      console.log("최신 모집공고",res.data.data)
     } catch {
       setRecruit(null);
     }
@@ -112,14 +116,14 @@ const RecuritList = () => {
     // 1) 일정 유형 우선 탐색
     const foundSchedule = events.find(e => e.date === dateStr && e.type === 'schedule');
     if (foundSchedule) {
-      navigate(`${basePath}/recruit/${foundSchedule.id}`); // 일정 상세
+      navigate(`${basePath}/recruit/${foundSchedule.id}`);
       return;
     }
 
-    // 2) 그게 없으면 모집공고 탐색
+    // 2) 모집공고 탐색
     const foundRecruit = events.find(e => e.date === dateStr && e.type === 'recruit');
     if (foundRecruit && recruit && foundRecruit.id === recruit.id) {
-      navigate(`${basePath}/recruit/${foundRecruit.id}`); // 모집공고 상세
+      navigate(`${basePath}/recruit/${foundRecruit.id}`);
     }
   };
 
@@ -173,9 +177,7 @@ const RecuritList = () => {
         value={selectedDate}
         tileContent={({ date }) => {
           const dateStr = formatLocalDate(date);
-          return events.some(e => e.date === dateStr)
-            ? <div className="dot" />
-            : null;
+          return events.some(e => e.date === dateStr) ? <div className="dot" /> : null;
         }}
         onClickDay={handleTileClick}
       />

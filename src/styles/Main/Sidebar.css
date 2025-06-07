@@ -78,29 +78,55 @@
   }
 }
 
-/* 반응형 - 작은 해상도 (768px 이하) */
 @media (max-width: 768px) {
+  /* 1) sidebar 자체를 grid 컨테이너로 */
   .sidebar {
-    width: 100%;
-    height: auto;
-    flex-direction: row;
-    flex-wrap: wrap;
-    border-right: none;
-    border-bottom: 1px solid #ccc;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 8px;
     padding: 10px;
-    justify-content: space-between;
+    border-bottom: 1px solid #ccc;
+    box-sizing: border-box;
+    height: auto;    /* 내용물 높이만큼 */
+    flex: none;      /* flex-wrap parent가 있으면 늘지 않도록 */
   }
 
+  /* 2) 제목(My)만 풀-그리드 컬럼 차지 */
   .sidebar h4 {
-    width: 100%;
+    grid-column: 1 / -1;
     font-size: 16px;
-    margin-bottom: 8px;
+    margin: 0 0 8px;
+    display: block;
   }
 
+  /* 3) category-buttons 래퍼를 해제해서 내부 버튼들이 곧바로 그리드 아이템 */
+  .category-buttons {
+    display: contents;
+  }
+
+  /* 4) 모든 사이드바 버튼 (My 버튼 + 카테고리 버튼)에 공통 스타일 */
   .sidebar > button,
-  .sidebar .category-buttons button {
-    width: 48%;
-    margin-bottom: 8px;
+  .category-buttons button {
+    width: 100%;            /* 각 그리드 셀 가득 채우기 */
+    padding: 8px 12px;
     font-size: 14px;
+    white-space: nowrap;
+    text-align: center;     /* 가운데 정렬 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* 5) main 컨텐츠 여백 리셋 (layout.css에도 있으면 중복 제거 가능) */
+  .main-container {
+    margin-left: 0;
+    max-width: 100%;
+    padding-top: 10px;
   }
 }
+
+
+
+
+
+
