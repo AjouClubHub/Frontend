@@ -127,6 +127,35 @@
   color: #bbb !important;
 }
 
+/* 레이블들 세로 정렬 컨테이너(이미 column 클래스에 flex-direction: column 적용) */
+.labels.column div {
+  /* 영역을 span 크기만큼 감싸기 위해 inline-block 사용 */
+  display: inline-block;
+}
+
+/* 기본 상태: 배경 투명, 텍스트 색상 지정 */
+.label.schedule,
+.label.recruit {
+  background: transparent;
+  color: #333;
+  padding: 2px 4px;
+  border-radius: 3px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+/* 일정 hover 시 파랑 배경, 흰색 텍스트 */
+.label.schedule:hover {
+  background-color: #3b82f6; /* Tailwind blue-500 */
+  color: #fff;
+}
+
+/* 모집 hover 시 초록 배경, 흰색 텍스트 */
+.label.recruit:hover {
+  background-color: #10b981; /* Tailwind green-500 */
+  color: #fff;
+}
+
+
 @media (min-width: 1200px) {
   .react-calendar {
     width: 600px;      /* 고정 너비 */

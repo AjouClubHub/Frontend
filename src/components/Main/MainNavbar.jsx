@@ -6,6 +6,7 @@ import "../../styles/Main/MainNavbar.css";
 import { LuLogIn } from "react-icons/lu";
 import { MdOutlineAccountCircle, MdManageAccounts, MdLogout } from "react-icons/md";
 import { FaRegCalendarCheck, FaCalendarAlt, FaCalendarPlus, FaCalendarTimes, FaCalendarMinus } from "react-icons/fa";
+import { BiSolidUserAccount } from "react-icons/bi";
 
 export default function MainNavbar({ onSearchChange, onRecruitmentChange }) {
   const navigate = useNavigate();
@@ -33,8 +34,10 @@ export default function MainNavbar({ onSearchChange, onRecruitmentChange }) {
           onChange={handleSearchInput}
           placeholder="🔍 동아리명 또는 키워드 검색"
         />
-        <button onClick={() => navigate("/auth/login")}><LuLogIn /> 로그인</button>
-        <button onClick={() => navigate("/auth/signup")}>회원가입</button>
+          
+        <button onClick={() => navigate("/auth/login")}><LuLogIn size={18} style={{ marginRight: 8, verticalAlign: 'middle' }}/>
+        로그인</button>
+        <button onClick={() => navigate("/auth/signup")}><BiSolidUserAccount size={18} style={{ marginRight: 8, verticalAlign: 'middle' }}/>회원가입</button>
       </nav>
     );
   }

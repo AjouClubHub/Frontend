@@ -67,7 +67,7 @@ const MyClubsDetail = () => {
 
       <div className="clubs-admin-detail-container">
         <aside className="club-sidebar">
-          <h3>{club.ClubName || club.name}</h3>
+          <h3>{club.clubName || club.name}</h3>
           <p><strong>설명:</strong> {club.description}</p>
           <p><strong>동방 위치:</strong> {club.location}</p>
           <p><strong>연락처:</strong> {club.contactInfo}</p>
