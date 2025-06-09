@@ -35,9 +35,9 @@ export default function MainNavbar({ onSearchChange, onRecruitmentChange }) {
           placeholder="🔍 동아리명 또는 키워드 검색"
         />
           
-        <button onClick={() => navigate("/auth/login")}><LuLogIn size={18} style={{ marginRight: 8, verticalAlign: 'middle' }}/>
+        <button type="button" onClick={() => navigate("/auth/login")}><LuLogIn size={18} style={{ marginRight: 8, verticalAlign: 'middle' }}/>
         로그인</button>
-        <button onClick={() => navigate("/auth/signup")}><BiSolidUserAccount size={18} style={{ marginRight: 8, verticalAlign: 'middle' }}/>회원가입</button>
+        <button type="button" onClick={() => navigate("/auth/signup")}><BiSolidUserAccount size={18} style={{ marginRight: 8, verticalAlign: 'middle' }}/>회원가입</button>
       </nav>
     );
   }
@@ -61,16 +61,16 @@ export default function MainNavbar({ onSearchChange, onRecruitmentChange }) {
         </button>
         {activeMenu === "status" && (
           <div className="status-menu">
-            <button onClick={() => { onRecruitmentChange("전체"); setActiveMenu(null); }}>
+            <button type="button"onClick={() => { onRecruitmentChange("전체"); setActiveMenu(null); }}>
               <FaCalendarAlt size={18} style={{ marginRight: 8, verticalAlign: 'middle' }}/>전체
             </button>
-            <button onClick={() => { onRecruitmentChange("모집중"); setActiveMenu(null); }}>
+            <button   type="button"onClick={() => { onRecruitmentChange("모집중"); setActiveMenu(null); }}>
               <FaCalendarPlus size={18} style={{ marginRight: 8, verticalAlign: 'middle' }}/>모집중
             </button>
-            <button onClick={() => { onRecruitmentChange("모집마감"); setActiveMenu(null); }}>
+            <button   type="button" onClick={() => { onRecruitmentChange("모집마감"); setActiveMenu(null); }}>
               <FaCalendarTimes size={18} style={{ marginRight: 8, verticalAlign: 'middle' }}/>모집마감
             </button>
-            <button onClick={() => { onRecruitmentChange("상시모집"); setActiveMenu(null); }}>
+            <button type="button" onClick={() => { onRecruitmentChange("상시모집"); setActiveMenu(null); }}>
               <FaCalendarMinus size={18} style={{ marginRight: 8, verticalAlign: 'middle' }}/>상시모집
             </button>
           </div>
@@ -85,10 +85,10 @@ export default function MainNavbar({ onSearchChange, onRecruitmentChange }) {
         </button>
         {activeMenu === "account" && (
           <div className="account-menu">
-            <button onClick={() => navigate("/auth/setting")}>
+            <button  type="button"onClick={() => navigate("/auth/setting")}>
               <MdManageAccounts size={18} style={{ marginRight: 8, verticalAlign: 'middle' }}/>계정조회
             </button>
-            <button onClick={() => { localStorage.removeItem("accessToken"); navigate("/auth/login"); }}>
+            <button  type="button"onClick={() => { localStorage.removeItem("accessToken"); navigate("/auth/login"); }}>
               <MdLogout size={18} style={{ marginRight: 8, verticalAlign: 'middle' }}/>로그아웃
             </button>
           </div>

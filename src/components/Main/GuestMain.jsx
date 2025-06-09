@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Pagination from 'react-js-pagination';
 import { useNavigate, useOutletContext } from 'react-router-dom';
-import '../../styles/Main/Main.css';
+import '../../styles/Main/GuestMain.css';
 
 export default function GuestMain() {
   const navigate = useNavigate();
@@ -72,7 +72,7 @@ export default function GuestMain() {
           <p>
             <strong>'Clubing'</strong>에 회원가입 후 손쉽게 동아리를 찾고 가입하세요!
             <br />
-            번거로운 관리, 이젠 간편하게.
+            번거로운 동아리 일정 멤버명단 · 관리, 이젠 간편하게.
           </p>
         </div>
       </div>
@@ -86,9 +86,9 @@ export default function GuestMain() {
               className="club-item"
               onClick={() => navigate(`/main/${club.id}`)}
             >
-              {club.imgUrl && (
+              {club.imaUrl && (
                 <img
-                  src={club.imgUrl}
+                  src={club.imaUrl}
                   alt={club.name}
                   style={{ width: '100%', height: 200, objectFit: 'cover', borderRadius: 8 }}
                 />

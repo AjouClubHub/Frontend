@@ -33,9 +33,7 @@ const SignUpForm = () => {
 
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken');
-    if (accessToken) {
-      navigate('/main/home');
-    }
+    if (accessToken) navigate('/main/home');
   }, [navigate]);
 
   const handleChangeState = (e) => {
@@ -47,47 +45,34 @@ const SignUpForm = () => {
     if (e.target.name === "studentId") setStudentIdChecked(false);
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') handleSubmit(e);
-  };
+  const handleKeyDown = (e) => { if (e.key === 'Enter') handleSubmit(e); };
 
   const checkEmailDuplicate = async () => {
-    if (!state.email) {
-      alert("이메일을 입력해주세요.");
-      return;
-    }
+    if (!state.email) return alert("이메일을 입력해주세요.");
     const ajouEmailRegex = /^[^\s@]+@ajou\.ac\.kr$/;
-    if (!ajouEmailRegex.test(state.email)) {
-      alert("ajou.ac.kr 도메인 이메일만 사용할 수 있습니다.");
-      return;
-    }
+    if (!ajouEmailRegex.test(state.email)) return alert("ajou.ac.kr 도메인 이메일만 사용할 수 있습니다.");
     try {
-      const res = await axios.get(`${import.meta.env.VITE_APP_URL}/api/auth/email`, {
-        params: { email: state.email }
-      });
-      const isDuplicate = res.data.data;
-      if (isDuplicate) {
+      const res = await axios.get(`${import.meta.env.VITE_APP_URL}/api/auth/email`, { params: { email: state.email } });
+      if (res.data.data) {
         alert("이미 가입된 이메일입니다.");
         setEmailChecked(false);
       } else {
-        alert("사용 가능한 이메일입니다. 인증 코드를 발송해주세요.");
+        alert("사용 가능한 이메일입니다.");
         setEmailChecked(true);
       }
     } catch (err) {
-      alert("이메일 중복 확인 중 오류가 발생했습니다.");
       console.error(err);
+      alert("이메일 중복 확인 중 오류가 발생했습니다.");
     }
   };
 
   const sendVerificationCode = async () => {
     try {
-      await axios.post(`${import.meta.env.VITE_APP_URL}/api/auth/send-email`, {
-        email: state.email
-      });
+      await axios.post(`${import.meta.env.VITE_APP_URL}/api/auth/send-email`, { email: state.email });
       alert("인증 코드가 이메일로 발송되었습니다.");
     } catch (err) {
-      alert("인증 코드 발송 중 오류 발생");
       console.error(err);
+      alert("인증 코드 발송 중 오류 발생");
     }
   };
 
@@ -97,11 +82,7 @@ const SignUpForm = () => {
         email: state.email,
         code: verificationCode.trim(),
       });
-      if (
-        res.data.statusCode === "200" ||
-        res.data.statusCode === 200 ||
-        res.data.statusCode === "OK"
-      ) {
+      if (["200", 200, "OK"].includes(res.data.statusCode)) {
         alert("이메일 인증이 완료되었습니다.");
         setEmailVerified(true);
         setEmailChecked(true);
@@ -109,22 +90,16 @@ const SignUpForm = () => {
         alert(res.data.message || "인증 코드가 일치하지 않습니다.");
       }
     } catch (err) {
-      console.error("인증 오류:", err.response?.data || err.message);
+      console.error(err.response?.data || err.message);
       alert("이메일 인증 중 오류가 발생했습니다.");
     }
   };
 
   const checkStudentIdDuplicate = async () => {
-    if (!state.studentId) {
-      alert("학번을 입력해주세요.");
-      return;
-    }
+    if (!state.studentId) return alert("학번을 입력해주세요.");
     try {
-      const res = await axios.get(`${import.meta.env.VITE_APP_URL}/api/auth/studentId`, {
-        params: { studentId: state.studentId }
-      });
-      const isDuplicate = res.data.data;
-      if (isDuplicate) {
+      const res = await axios.get(`${import.meta.env.VITE_APP_URL}/api/auth/studentId`, { params: { studentId: state.studentId } });
+      if (res.data.data) {
         alert("이미 사용 중인 학번입니다.");
         setStudentIdChecked(false);
       } else {
@@ -132,69 +107,28 @@ const SignUpForm = () => {
         setStudentIdChecked(true);
       }
     } catch (err) {
-      alert("학번 중복 확인 중 오류가 발생했습니다.");
       console.error(err);
+      alert("학번 중복 확인 중 오류가 발생했습니다.");
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const ajouEmailRegex = /^[^\s@]+@ajou\.ac\.kr$/;
-
-    if (!emailRegex.test(state.email)) {
-      email.current.focus();
-      alert('올바른 이메일 형식이 아닙니다.');
-      return;
-    }
     if (!ajouEmailRegex.test(state.email)) {
       email.current.focus();
-      alert('ajou.ac.kr 도메인 메일만 가입할 수 있습니다.');
-      return;
+      return alert('ajou.ac.kr 도메인 메일만 가입할 수 있습니다.');
     }
-    if (!state.name) {
-      name.current.focus();
-      alert("이름을 입력하세요");
-      return;
-    }
-    if (state.password.length < 4) {
-      password.current.focus();
-      alert("비밀번호를 4글자 이상 입력하세요");
-      return;
-    }
-    if (state.password !== state.re_password) {
-      re_password.current.focus();
-      alert("비밀번호가 다릅니다. 다시 입력하세요");
-      return;
-    }
-    if (!state.memberRole) {
-      alert("역할을 선택해주세요");
-      return;
-    }
-    if (!state.major) {
-      alert("학과를 선택해주세요");
-      return;
-    }
- 
-    if (!studentIdChecked) {
-      alert("학번 중복 확인을 해주세요.");
-      return;
-    }
-
-    const dataToSend = {
-      studentId: state.studentId,
-      name: state.name,
-      password: state.password,
-      email: state.email,
-      memberRole: state.memberRole,
-      major: state.major
-    };
+    if (!state.name) return name.current.focus() || alert("이름을 입력하세요");
+    if (state.password.length < 4) return password.current.focus() || alert("비밀번호를 4글자 이상 입력하세요");
+    if (state.password !== state.re_password) return re_password.current.focus() || alert("비밀번호가 다릅니다. 다시 입력하세요");
+    if (!state.memberRole) return alert("역할을 선택해주세요");
+    if (!state.major) return alert("학과를 선택해주세요");
+    if (!studentIdChecked) return alert("학번 중복 확인을 해주세요.");
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_APP_URL}/api/auth/signup`,
-        dataToSend,
+        `${import.meta.env.VITE_APP_URL}/api/auth/signup`, state,
         { headers: { 'Content-Type': 'application/json' } }
       );
       if (response.status === 200) {
@@ -202,7 +136,7 @@ const SignUpForm = () => {
         navigate('/auth/login');
       }
     } catch (error) {
-      console.error("회원가입 실패:", error);
+      console.error(error);
       alert("서버 오류가 발생했습니다. 다시 시도해주세요.");
     }
   };
@@ -230,19 +164,12 @@ const SignUpForm = () => {
         </button>
       </div>
 
-      {/* 이름 입력 */}
+      {/* 이름 */}
       <div>
-        <input
-          ref={name}
-          name="name"
-          value={state.name}
-          onChange={handleChangeState}
-          onKeyDown={handleKeyDown}
-          placeholder="이름"
-        />
+        <input ref={name} name="name" value={state.name} onChange={handleChangeState} placeholder="이름" />
       </div>
 
-      {/* 비밀번호 입력 */}
+      {/* 비밀번호 */}
       <div>
         <input
           ref={password}
@@ -250,11 +177,9 @@ const SignUpForm = () => {
           type="password"
           value={state.password}
           onChange={handleChangeState}
-          onKeyDown={handleKeyDown}
           placeholder="비밀번호"
         />
       </div>
-
       <div>
         <input
           ref={re_password}
@@ -262,45 +187,42 @@ const SignUpForm = () => {
           type="password"
           value={state.re_password}
           onChange={handleChangeState}
-          onKeyDown={handleKeyDown}
           placeholder="비밀번호 재입력"
         />
-   
         {state.re_password && state.password !== state.re_password && (
           <p style={{ color: 'red', margin: '4px 0' }}>비밀번호가 다릅니다.</p>
         )}
       </div>
 
+      {/* 이메일 입력 및 버튼 */}
       <div className="input-with-double-buttons">
         <input
           ref={email}
           name="email"
           value={state.email}
           onChange={handleChangeState}
-          onKeyDown={handleKeyDown}
           placeholder="이메일 (ajou.ac.kr)"
           className="with-check"
         />
-        <button type="button" className="check-btn" onClick={checkEmailDuplicate}>
-          중복 확인
+        <button
+          type="button"
+          className="check-btn"
+          onClick={emailChecked ? sendVerificationCode : checkEmailDuplicate}
+        >
+          {emailChecked
+            ? emailVerified
+              ? '인증 완료'
+              : '코드 발송'
+            : '중복 확인'}
         </button>
-        {emailChecked && !emailVerified && (
-          <button
-            type="button"
-            className="check-btn"
-            onClick={sendVerificationCode}
-          >
-            코드 발송
-          </button>
-        )}
       </div>
 
-      {/* 인증 코드 입력 + 확인 */}
+      {/* 인증 코드 입력 및 확인 */}
       {emailChecked && !emailVerified && (
         <div className="input-with-button">
           <input
             type="text"
-            placeholder="인증 코드 입력"
+            placeholder="코드 발송 후 인증 코드 입력"
             value={verificationCode}
             onChange={(e) => setVerificationCode(e.target.value)}
           />

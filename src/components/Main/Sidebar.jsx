@@ -69,11 +69,11 @@ const Sidebar = ({ onCategoryClick, hideMyCategory = false }) => {
       {!hideMyCategory && (
         <>
           <h4>My</h4>
-          <button onClick={() => navigate('/myclubs/home')}>
-            <MdOutlineAccountBox size={18} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+          <button type="button" onClick={() => navigate('/myclubs/home')}>
+            <MdOutlineAccountBox size={18} style={{ marginRight: '8px', verticalAlign: 'middle',  }} />
             내 클럽
           </button>
-          <button onClick={() => navigate('/clubsadmin/home')}>
+          <button type="button" onClick={() => navigate('/clubsadmin/home')}>
             <MdManageAccounts size={18} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
             내 클럽 관리하기
           </button>
