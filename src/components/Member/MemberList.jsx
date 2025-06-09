@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate, useLocation ,useOutletContext} from "react-router-dom";
+import { useParams, useNavigate, useLocation, useOutletContext } from "react-router-dom";
 import axios from "axios";
 import "../../styles/Member/MemberList.css";
 
@@ -7,12 +7,15 @@ const MemberList = () => {
   const { clubId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const { isManager } = useOutletContext();
 
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const {isManager} = useOutletContext();
+  // 현재 뷰가 admin용인지 user용(myclubs)인지 판별
+  const isAdminView = location.pathname.includes("clubsadmin");
+  const basePath = isAdminView ? "/clubsadmin" : "/myclubs";
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -21,12 +24,11 @@ const MemberList = () => {
         const res = await axios.get(
           `${import.meta.env.VITE_APP_URL}/api/clubs/${clubId}/members`,
           {
-            headers: {
-              Authorization: `Bearer Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer Bearer ${token}` },
           }
         );
         setMembers(res.data.data || []);
+        console.log("멤버명단",res.data.data)
       } catch (err) {
         console.error("멤버 목록 조회 실패:", err);
         setError("멤버 목록을 불러올 수 없습니다.");
@@ -39,15 +41,15 @@ const MemberList = () => {
   }, [clubId]);
 
   const goToMember = () => {
-    navigate(`/clubsadmin/${clubId}/member`);
+    navigate(`${basePath}/${clubId}/member`);
   };
 
   const goToMemberNew = () => {
-    navigate(`/clubsadmin/${clubId}/membernew`);
+    navigate(`${basePath}/${clubId}/membernew`);
   };
 
   if (loading) return <div>📡 로딩 중...</div>;
-  if (error) return <div>❌ {error}</div>;
+  if (error)   return <div>❌ {error}</div>;
 
   return (
     <div className="member-list">
@@ -61,14 +63,13 @@ const MemberList = () => {
             기존 멤버
           </button>
           {isManager && (
-  <button
-    className={location.pathname.includes("membernew") ? "active" : ""}
-    onClick={goToMemberNew}
-  >
-    신청 관리
-  </button>
-)}
-
+            <button
+              className={location.pathname.includes("membernew") ? "active" : ""}
+              onClick={goToMemberNew}
+            >
+              신청 관리
+            </button>
+          )}
         </div>
       </div>
 
@@ -87,10 +88,14 @@ const MemberList = () => {
           <tbody>
             {members.map((member) => (
               <tr
-              key={member.memberId}
-              style={{ cursor: "pointer" }}
-              onClick={() => navigate(`/clubsadmin/${clubId}/member/${member.memberId}`)}
-            >
+                key={member.memberId}
+                style={{ cursor: "pointer" }}
+                onClick={() =>
+                  navigate(
+                    `${basePath}/${clubId}/member/${member.memberId}`
+                  )
+                }
+              >
                 <td>{member.name}</td>
                 <td>{member.studentId}</td>
                 <td>{member.major}</td>

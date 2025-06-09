@@ -2,15 +2,15 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/Auth/Setting.css';
-import { IoArrowBackSharp } from "react-icons/io5";
+import { IoArrowBackSharp } from 'react-icons/io5';
 
 const Setting = () => {
   const navigate = useNavigate();
   const [member, setMember] = useState(null);
   const [joinedClubs, setJoinedClubs] = useState([]);
   const [applicationStatus, setApplicationStatus] = useState([]);
-  const [notifications, setNotifications] = useState([]); // Unread notifications
-  const [previousNotifications, setPreviousNotifications] = useState([]); // Read notifications
+  const [notifications, setNotifications] = useState([]);
+  const [previousNotifications, setPreviousNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState('profile');
 
@@ -32,7 +32,6 @@ const Setting = () => {
         { headers: { Authorization: `Bearer Bearer ${token}` } }
       );
       const allNotes = notificationsResponse.data.data || [];
-      // Separate unread and read
       setNotifications(allNotes.filter(n => !n.isRead));
       setPreviousNotifications(allNotes.filter(n => n.isRead));
     } catch (error) {
@@ -49,10 +48,9 @@ const Setting = () => {
         {},
         { headers: { Authorization: `Bearer Bearer ${token}` } }
       );
-      // Move to previousNotifications
       setNotifications(prev => {
-        const remaining = prev.filter(n => n.id !== notificationId);
-        const marked = prev.find(n => n.id === notificationId);
+        const remaining = prev.filter(n => n.notificationId !== notificationId);
+        const marked = prev.find(n => n.notificationId === notificationId);
         if (marked) {
           setPreviousNotifications(prevPrev => [
             { ...marked, isRead: true },
@@ -75,7 +73,9 @@ const Setting = () => {
 
   return (
     <div className="mypage-container">
-      <button className="back-button" onClick={() => navigate('/main/home')}><IoArrowBackSharp /></button>
+      <button className="back-button" onClick={() => navigate('/main/home')}>
+        <IoArrowBackSharp />
+      </button>
 
       <div className="tab-buttons">
         <button
@@ -109,8 +109,8 @@ const Setting = () => {
             {joinedClubs.length > 0 ? (
               <ul>
                 {joinedClubs.map(club => (
-                  <li key={club.id}>
-                    <p>{club.name}</p>
+                  <li key={club.clubId}>
+                    <p>{club.clubName}</p>
                     <p>{club.status}</p>
                   </li>
                 ))}
@@ -125,7 +125,7 @@ const Setting = () => {
             {applicationStatus.length > 0 ? (
               <ul>
                 {applicationStatus.map(app => (
-                  <li key={app.id}>
+                  <li key={app.applicationId}>
                     <p>{app.clubName}</p>
                     <p>{app.status}</p>
                   </li>
@@ -145,8 +145,8 @@ const Setting = () => {
             <ul>
               {notifications.map(notification => (
                 <li
-                  key={notification.id}
-                  onClick={() => markAsRead(notification.id)}
+                  key={notification.notificationId}
+                  onClick={() => markAsRead(notification.notificationId)}
                   className="unread"
                 >
                   <p>{notification.content}</p>
@@ -162,7 +162,7 @@ const Setting = () => {
           {previousNotifications.length > 0 ? (
             <ul>
               {previousNotifications.map(notification => (
-                <li key={notification.id} className="read">
+                <li key={notification.notificationId} className="read">
                   <p>{notification.content}</p>
                   <small>{new Date(notification.createdAt).toLocaleString()}</small>
                 </li>
