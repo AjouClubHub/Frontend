@@ -11,8 +11,12 @@ const RecuritList = () => {
   const [schedules, setSchedules] = useState([]);
   const [recruit, setRecruit] = useState(null);
 
+  // 일정·모집공고 날짜를 담을 Set
+  const [scheduleDates, setScheduleDates] = useState(new Set());
+  const [recruitDates, setRecruitDates] = useState(new Set());
+
   const navigate = useNavigate();
-  const location = useLocation();              // ★ useLocation 추가
+  const location = useLocation();
   const { clubId } = useParams();
   const { isManager } = useOutletContext();
 
@@ -20,35 +24,33 @@ const RecuritList = () => {
     ? `/clubsadmin/${clubId}`
     : `/myclubs/${clubId}`;
 
-  // ★ location.pathname을 deps에 포함
+  // 초기 데이터 로드
   useEffect(() => {
     fetchSchedules();
     fetchRecruit();
   }, [clubId, location.pathname]);
 
-  // 일정 조회 (60일 뒤까지)
+  // 일정 조회
   const fetchSchedules = async () => {
     const token = localStorage.getItem('accessToken');
     const start = new Date().toISOString();
     const end = new Date(Date.now() + 1000 * 60 * 60 * 24 * 60).toISOString();
-
     try {
       const res = await axios.get(
         `${import.meta.env.VITE_APP_URL}/api/clubs/${clubId}/schedules`,
-        {
-          headers: { Authorization: `Bearer Bearer ${token}` },
-          params: { start, end }
-        }
+        { headers: { Authorization: `Bearer Bearer ${token}` }, params: { start, end } }
       );
-      console.log('🔄 fetchSchedules 결과:', res.data.data);
-      setSchedules(parseSchedules(res.data.data || []));
+      const evts = parseSchedules(res.data.data || []);
+      setSchedules(evts);
+      setScheduleDates(new Set(evts.map(e => e.date)));
     } catch (err) {
       console.error('fetchSchedules 에러:', err);
       setSchedules([]);
+      setScheduleDates(new Set());
     }
   };
 
-  // 단건 모집공고 조회
+  // 모집공고 조회
   const fetchRecruit = async () => {
     const token = localStorage.getItem('accessToken');
     try {
@@ -56,13 +58,24 @@ const RecuritList = () => {
         `${import.meta.env.VITE_APP_URL}/api/clubs/${clubId}/recruitment`,
         { headers: { Authorization: `Bearer Bearer ${token}` } }
       );
-      console.log('🔄 fetchRecruit 결과:', res.data.data);
-      setRecruit(res.data.data || null);
+      const rec = res.data.data || null;
+      setRecruit(rec);
     } catch (err) {
       console.error('fetchRecruit 에러:', err);
       setRecruit(null);
+      setRecruitDates(new Set());
     }
   };
+
+  // 모집공고 변경 시 날짜 Set 갱신
+  useEffect(() => {
+    if (!recruit) {
+      setRecruitDates(new Set());
+    } else {
+      const dates = getDateRange(recruit.startDate, recruit.endDate);
+      setRecruitDates(new Set(dates));
+    }
+  }, [recruit]);
 
   // 날짜 포맷 헬퍼
   const formatLocalDate = date => {
@@ -84,46 +97,27 @@ const RecuritList = () => {
     return result;
   };
 
-  // 일정 → 이벤트 리스트
+  // 일정 → 이벤트 리스트 변환
   const parseSchedules = data =>
     data.flatMap(item => {
       const dates = getDateRange(item.startTime, item.endTime);
-      return dates.map(d => ({
-        id: item.id,
-        date: d,
-        title: item.title,
-        type: 'schedule'
-      }));
+      return dates.map(d => ({ id: item.id, date: d, title: item.title, type: 'schedule' }));
     });
 
-  // 모집공고 → 이벤트 리스트
-  const parseRecruit = () => {
-    if (!recruit) return [];
-    const dates = getDateRange(recruit.startDate, recruit.endDate);
-    return dates.map(d => ({
-      id: recruit.id,
-      date: d,
-      title: `[모집공고] ${recruit.title}`,
-      type: 'recruit'
-    }));
-  };
-
-  const events = [...schedules, ...parseRecruit()];
-
+  // 달력 클릭 시 이동 처리
   const handleTileClick = date => {
     const dateStr = formatLocalDate(date);
-    const sch = events.find(e => e.date === dateStr && e.type === 'schedule');
-    if (sch) {
-      navigate(`${basePath}/recruit/${sch.id}`);
-      return;
+    if (scheduleDates.has(dateStr)) {
+      const sch = schedules.find(e => e.date === dateStr);
+      return navigate(`${basePath}/recruit/${sch.id}`);
     }
-    const rec = events.find(e => e.date === dateStr && e.type === 'recruit');
-    if (rec && recruit && rec.id === recruit.id) {
-      navigate(`${basePath}/recruit/${rec.id}`);
+    if (recruitDates.has(dateStr) && recruit) {
+      return navigate(`${basePath}/recruit/${recruit.id}`);
     }
   };
 
   // 하단 목록 그룹화
+  const events = [...schedules, ...(recruit ? parseSchedules([{ id: recruit.id, startTime: recruit.startDate, endTime: recruit.endDate, title: recruit.title }]) : [])];
   const grouped = Object.values(
     events.reduce((acc, curr) => {
       const key = `${curr.type}-${curr.id}`;
@@ -142,16 +136,10 @@ const RecuritList = () => {
 
       {isManager && (
         <div className="schedule-actions">
-          <button
-            className="create-button"
-            onClick={() => navigate(`${basePath}/recruitcreate`, { state: { mode: 'recruit' } })}
-          >
+          <button className="create-button" onClick={() => navigate(`${basePath}/recruitcreate`, { state: { mode: 'recruit' } })}>
             모집공고 등록하기
           </button>
-          <button
-            className="create-button"
-            onClick={() => navigate(`${basePath}/recruitcreate`, { state: { mode: 'schedule' } })}
-          >
+          <button className="create-button" onClick={() => navigate(`${basePath}/recruitcreate`, { state: { mode: 'schedule' } })}>
             일정 등록하기
           </button>
         </div>
@@ -160,9 +148,12 @@ const RecuritList = () => {
       <Calendar
         onChange={setSelectedDate}
         value={selectedDate}
-        tileContent={({ date }) =>
-          events.some(e => e.date === formatLocalDate(date)) ? <div className="dot" /> : null
-        }
+        tileContent={({ date }) => (
+          <div className="dots">
+            {scheduleDates.has(formatLocalDate(date)) && <span className="dot blue" />}
+            {recruitDates.has(formatLocalDate(date)) && <span className="dot red" />}
+          </div>
+        )}
         onClickDay={handleTileClick}
       />
 
@@ -173,11 +164,7 @@ const RecuritList = () => {
         ) : (
           <ul>
             {grouped.map(r => (
-              <li
-                key={`${r.type}-${r.id}`}
-                onClick={() => navigate(`${basePath}/recruit/${r.id}`)}
-                style={{ cursor: 'pointer' }}
-              >
+              <li key={`${r.type}-${r.id}`} onClick={() => navigate(`${basePath}/recruit/${r.id}`)} style={{ cursor: 'pointer' }}>
                 {r.start} ~ {r.end} - {r.title}
               </li>
             ))}

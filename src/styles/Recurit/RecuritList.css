@@ -49,13 +49,28 @@
 }
 
 /* 캘린더 날짜에 점 표시 */
-.dot {
-  width: 6px;
-  height: 6px;
-  background-color: #4e90fd;
-  border-radius: 50%;
-  margin: auto;
+
+.dots {
+  display: flex;
+  gap: 2px;
+  justify-content: center;
+  margin-top: 2px;
 }
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.dot.blue {
+  background-color: #357ae8;
+}
+
+.dot.red {
+  background-color: rgb(34, 85, 59);
+}
+
 
 /* 일정 목록 스타일 */
 .schedule-list {
