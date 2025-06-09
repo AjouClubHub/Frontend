@@ -1,0 +1,112 @@
+html, body, #root {
+    height: 100%;
+    margin: 0;
+  }
+  
+  .mypage-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 100vh;
+    background-color: #f9f9f9;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  
+  .back-button {
+    align-self: flex-start;
+    margin-bottom: 20px;
+    padding: 8px 16px;
+    background-color: #e0e0e0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+  }
+  
+  .back-button:hover {
+    background-color: #d0d0d0;
+  }
+  
+  .tab-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+  }
+  
+  .tab-buttons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #e0e0e0;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s;
+  }
+  
+  .tab-buttons button.active {
+    background-color: #007bff;
+    color: #ffffff;
+  }
+  
+  section {
+    background-color: #ffffff;
+    width: 80%;
+    max-width: 600px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+  }
+  
+  section h3 {
+    margin-top: 0;
+    text-align: center;
+    font-size: 1.2rem;
+    color: #333333;
+  }
+  
+  section p {
+    font-size: 1rem;
+    color: #555555;
+    margin-bottom: 10px;
+  }
+  
+  section ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  section ul li {
+    padding: 15px;
+    border-bottom: 1px solid #eeeeee;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  section ul li:last-child {
+    border-bottom: none;
+  }
+  
+  .notifications li.unread {
+    font-weight: bold;
+    color: #000000;
+  }
+  
+  .notifications li.read {
+    font-weight: normal;
+    color: #888888;
+  }
+  
+  .loading, .error {
+    font-size: 18px;
+    color: #666666;
+    text-align: center;
+    width: 100%;
+  }

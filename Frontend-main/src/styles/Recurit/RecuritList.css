@@ -1,0 +1,198 @@
+.calendar-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* React-Calendar 자체 스타일: 캘린더 가운데 배치 */
+.react-calendar {
+  width: 600px;       /* 원하는 픽셀 값 */
+  max-width: 90%;     /* 반응형을 유지하고 싶으면 % 단위도 함께 사용 */
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+.calendar-wrapper h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+/* 일정등록 및 모집공고등록 버튼: 캘린더 아래 오른쪽 정렬 */
+.schedule-actions {
+  display: flex;
+  gap: 10px;
+  align-self: flex-end;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.create-button {
+  background-color: #4e90fd;
+  color: white;
+  font-size: 14px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.create-button:hover {
+  background-color: #357ae8;
+}
+
+/* 캘린더 날짜에 점 표시 */
+
+.dots {
+  display: flex;
+  gap: 2px;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.dot.blue {
+  background-color: #357ae8;
+}
+
+.dot.red {
+  background-color: rgb(34, 85, 59);
+}
+
+
+/* 일정 목록 스타일 */
+.schedule-list {
+  margin-top: 20px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.schedule-list h3 {
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.schedule-list ul {
+  list-style: none;
+  padding: 0;
+}
+
+.schedule-list li {
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+  color: #555;
+}
+
+.schedule-list p {
+  color: #777;
+}
+
+/* 모든 날짜 타일 기본 배경색 변경 */
+.react-calendar__tile {
+  background-color: #fff !important; /* 원하는 배경색 */
+}
+
+/* 오늘 날짜 강조 색 변경 */
+.react-calendar__tile--now {
+  background: #ffe4e1 !important; /* '오늘' 타일 배경색 */
+}
+
+/* 선택된 날짜 강조 색 변경 */
+.react-calendar__tile--active {
+  background: #ffdead !important;
+  color: #333 !important;
+}
+
+/* hover 시 배경색 */
+.react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus {
+  background-color: #e6f7ff !important;
+}
+
+/* 비활성화된 날짜(다른 달)의 색 변경 */
+.react-calendar__tile--neighboringMonth {
+  background-color: #fafafa !important;
+  color: #bbb !important;
+}
+
+@media (min-width: 1200px) {
+  .react-calendar {
+    width: 600px;      /* 고정 너비 */
+  }
+  .calendar-wrapper {
+    padding: 30px;
+  }
+  .schedule-actions .create-button {
+    padding: 10px 16px;
+    font-size: 16px;
+  }
+  .schedule-list,
+  .react-calendar {
+    max-width: 600px;
+  }
+}
+@media (max-width: 1199px) and (min-width: 768px) {
+  .react-calendar {
+    width: 80%;        /* 부모 대비 80% */
+  }
+  .calendar-wrapper {
+    padding: 24px;
+  }
+  .schedule-actions .create-button {
+    padding: 9px 14px;
+    font-size: 15px;
+  }
+  .schedule-list,
+  .react-calendar {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 767px) {
+  .calendar-wrapper {
+    padding: 16px;
+  }
+
+  .react-calendar {
+    width: 100%;       /* 화면 꽉 채우기 */
+    max-width: 100%;
+  }
+
+  /* 버튼과 리스트도 폭 맞추기 */
+  .schedule-actions {
+    align-self: stretch;   /* 양쪽 끝까지 */
+    justify-content: center;
+  }
+  .schedule-actions .create-button {
+    flex: 1;               /* 버튼이 같은 크기로 */
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  .schedule-list {
+    width: 100%;
+    padding: 0 8px;
+  }
+
+  /* 캘린더 내부 타일(글자 크기 축소) */
+  .react-calendar__tile {
+    font-size: 0.85rem !important;
+    padding: 8px 0 !important;
+  }
+  .react-calendar__tile--now,
+  .react-calendar__tile--active {
+    font-size: 0.9rem !important;
+  }
+}

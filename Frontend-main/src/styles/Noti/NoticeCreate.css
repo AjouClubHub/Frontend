@@ -1,0 +1,92 @@
+.notice-create {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 30px;
+  font-family: "Noto Sans KR", sans-serif;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.notice-create h2 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+.notice-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.notice-form label {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.notice-form input[type="text"] {
+  padding: 12px 16px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.editor {
+  min-height: 300px;
+  border: 1px solid #ccc;
+  padding: 1rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  background-color: white;
+  line-height: 1.6;
+  outline: none;
+}
+
+/* TipTap placeholder 스타일 */
+.editor [data-placeholder]::before {
+  content: attr(data-placeholder);
+  color: #aaa;
+  font-style: italic;
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+.button-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.notice-form button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  background-color: #2f80ed;
+  color: white;
+  transition: background-color 0.2s;
+}
+
+.notice-form button:hover {
+  background-color: #1c5fcc;
+}
+
+.error-text {
+  color: red;
+  font-size: 14px;
+}
+
+.loading {
+  padding: 10px;
+  color: gray;
+  font-style: italic;
+}
+
+.notice-form button.cancel-btn {
+  background-color: #ccc;
+  color: black;
+}
